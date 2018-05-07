@@ -1,0 +1,51 @@
+\documentclass[onecolumn, draftclsnofoot,10pt, compsoc]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{setspace}
+
+\usepackage{geometry}
+\geometry{textheight=9.5in, textwidth=7in}
+
+% 1. Fill in these details
+\def \ClassName{		CS 444: Operating Systems II }
+\def \TeamNumber{		Group 31}
+\def \GroupMemberOne{			Kevin Talik}
+\def \GroupMemberTwo{			Austin Sanders}
+\def \GroupMemberThree{			Zach Tusing}
+
+
+			
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+ 	\begin{center}
+	\huge\bf{ } 
+   
+    \large\textbf{\textit{ Project 2: Taking an I/O Elevator to Dante's Inferno }}\par
+     
+    
+    
+	\small{\bf\textit \ClassName Oregon State University}\par
+    \small{\bf{\TeamNumber}}
+    
+    
+    {\bf\textit{ Spring Term, May 6th, 2018} }
+    
+    
+    {\small {\bf Prepared by:} \GroupMemberOne, \GroupMemberTwo, and \GroupMemberThree }
+        \end{center}
+    %\includegraphics{yoctoLogo.png}
+    %\begin{flushright}
+    %\small{Figure 69. This is a caption}
+    %\end{flushright}
+ 		\vfill
+		\section( Abstract )
+		
+       \pagebreak
+       \section{Introduction }
+		 In this project, we were asked test the stability of the I/O elevators of the linux-yocto kernel \url(git.yoctoproject.org/cgit.cgi/linux-yocto/tree/drivers?id=v3.19.2). Instintively, we took turns testing a new elavating device with our body weight until it broke. 
+
+		 This paper will first cover the functionality of an I/O elavator, and a few examples of modern input/output algorithms. 
+		 Next, this paper will illuminate the current I/O elavator (FIFO NO-OP) that is in the file system specified above. 
+		 With this information, our team will describe our experiences implementing the LOOK I/O Scheduler, and what to expect when swapping out the \textit(virtual) device that reads the input from your \textit(physical) device.
+        \end{document}
