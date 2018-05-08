@@ -2,6 +2,14 @@ if BLOCK
 
 menu "IO Schedulers"
 
+config IOSCHED_SSTF
+	bool
+	default y
+	---help---
+	  This is the SSTF block I/O scheduler. Please don't actually use it
+	  because I wrote, and I can not imagine that it will turn out well for
+	  either of us.
+
 config IOSCHED_NOOP
 	bool
 	default y
