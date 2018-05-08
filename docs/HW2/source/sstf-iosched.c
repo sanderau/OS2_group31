@@ -79,6 +79,81 @@ static void sstf_exit_queue(struct elevator_queue *el_queue)
 	kfree(data);
 }
 
+/* 
+ * This function will add an item to the list for the elevator to deal with at an appropriate time.
+ */
+static void sstf_add_queue(struct request_queue *rq, struct request *r)
+{
+	struct sstf_data *data = rq->elevator->elevator_data;
+	struct request *curr_req;
+	struct list_head *curr_pos;
+	
+	if(list_empty(&data->queue)) {
+		/*Does not matter where the request is if list is empty*/
+		printk(KERN_DEBUG "sstf-iosched: adding item to empty list\n");
+		list_add(&r->queuelist, &data->queue);
+	} else {
+		/*iterating through the list*/
+		list_for_each(curr_pos, &data->queue) {
+			curr_req = list_entry(curr_pos, struct request, queuelist);
+			/*if req sector is higher than the current position, then add the item in from of the list*/
+			if(blk_rq_pos(curr_req) < blk_rq_pos(r)) {
+				printk(KERN_DEBUG "sstf-iosched: adding item to correct pos\n");
+				list_add(&r->queuelist, &curr_req->queuelist);
+				break;
+			}
+		}
+	}
+}
+
+/*
+ * merge the requests
+ */
+static void sstf_merged_req(struct request_queue *rq, struct request *r, struct request *next) 
+{
+	list_del_init(&next->queuelist);
+}
+
+/*
+ *dispatch
+ */
+
+static int sstf_dispatch(struct request_queue *rq, int force)
+{
+	struct sstf_data *data = rq->elevator->elevator_data;
+
+	if(!(list_empty(&data->queue))) {
+		
+		struct request *req = list_entry(data->queue.next, struct request, queuelist);
+		list_del_init(&req->queuelist);
+
+		elv_dispatch_add_tail(rq, req);
+		return 1;
+	}
+
+	return 0;
+}
+
+static struct request *
+sstf_former_req(struct request_queue *q, struct request *rq)
+{
+	struct sstf_data *sd = q->elevator->elevator_data;
+
+	if(rq->queuelist.prev == &sd->queue)
+		return NULL;
+	return list_entry(rq->queuelist.prev, struct request, queuelist);
+}
+
+static struct request *
+sstf_latter_req(struct request_queue *q, struct request *rq)
+{
+	struct sstf_data *sd = q->elevator->elevator_data;
+
+	if(rq->queuelist.next == &sd->queue)
+		return NULL;
+	return list_entry(rq->queuelist.next, struct request, queuelist);
+}
+
 
 /*		Elevator Data Structure		*/
 
@@ -92,7 +167,11 @@ static struct elevator_type elevator_sstf = {
 	.ops = {
 		.elevator_init_fn 	= sstf_init_queue, /*initialize the elevator */
 		.elevator_exit_fn 	= sstf_exit_queue, /*free the elevator*/
-
+		.elevator_add_req_fn 	= sstf_add_queue, /*add an item to the elevators list*/
+		.elevator_merge_req_fn 	= sstf_merged_req, /*merge. those. requests. */
+		.elevator_dispatch_fn 	= sstf_dispatch, /* */
+		.elevator_former_req_fn = sstf_former_req, /* */
+		.elevator_latter_req_fn = sstf_latter_req, /* */
 	},
 	.elevator_name = "SSTF",
 	.elevator_owner = THIS_MODULE,
