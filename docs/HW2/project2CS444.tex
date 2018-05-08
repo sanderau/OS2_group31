@@ -47,7 +47,7 @@
        \pagebreak
        \section{Introduction }
 		 In this project, we were asked test the stability of the I/O elevators of the linux-yocto kernel \url{git.yoctoproject.org/cgit.cgi/linux-yocto/tree/drivers?id=v3.19.2}
-          Instinctively, we took turns testing a new elevating device with our body weight until it broke. 
+          Instinctively, we took turns testing a new elevating device with our body weight until it broke. After taking out the "if=virtio" tag in the command that launches the virtual machine, the kernel asks to specify a file as to what scheduler to use. We then specified our scheduler that we wrote called \textit{sstf-iosched.c}.
 
 		 The primary data structure for the IO elevator algorithm that we are using is the: \url{http://git.yoctoproject.org/cgit.cgi/linux-yocto/tree/include/linux/list.h?id=v3.19.2 }.
          Using this predefined linked list data structure in the linux kernel, our team implemented a CLOOK algorithm.
