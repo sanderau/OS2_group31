@@ -39,32 +39,40 @@
     %\small{Figure 69. This is a caption}
     %\end{flushright}
  		\vfill
-		\section( Abstract )
+		\begin{abstract}
+        This paper will explain the functionality of an IO Scheduler (or "Elevator") algorithm in context to the current No-Op scheduler in the linux-yocto project (version 3.19.2). Following the background, is an explanation of how to implement a different scheduler, CLOOK. CLOOK is a scheduling algorithm that avoids starvation and "Hard Drive Time Bias", because it uses less needle seeks on average \cite{iitDiskAlgs:1}.
+        \end{abstract}
+    
 		
        \pagebreak
        \section{Introduction }
-		 In this project, we were asked test the stability of the I/O elevators of the linux-yocto kernel \url(git.yoctoproject.org/cgit.cgi/linux-yocto/tree/drivers?id=v3.19.2). Instinctively, we took turns testing a new elevating device with our body weight until it broke. 
+		 In this project, we were asked test the stability of the I/O elevators of the linux-yocto kernel \url{git.yoctoproject.org/cgit.cgi/linux-yocto/tree/drivers?id=v3.19.2}
+          Instinctively, we took turns testing a new elevating device with our body weight until it broke. 
 
-		 The primary data structure for the IO elevator algorithm that we are using is the: (http://git.yoctoproject.org/cgit.cgi/linux-yocto/tree/include/linux/llist.h?id=v3.19.2).
-         Using this predefined linked list data structure in the linux kernel, our team implemented a CLOOK algorithm
+		 The primary data structure for the IO elevator algorithm that we are using is the: \url{http://git.yoctoproject.org/cgit.cgi/linux-yocto/tree/include/linux/list.h?id=v3.19.2 }.
+         Using this predefined linked list data structure in the linux kernel, our team implemented a CLOOK algorithm.
+
+
 		 This paper will first cover the functionality of an I/O elevator, and a few examples of modern input/output algorithms. 
 		 Next, this paper will illuminate the current I/O elevator (FIFO NO-OP) that is in the file system specified above. 
-		 With this information, our team will describe our experiences implementing the LOOK I/O Scheduler, and what to expect when swapping out the \textit(virtual) device that reads the input from your \textit(physical) device.
+		 With this information, our team will describe our experiences implementing the LOOK I/O Scheduler, and what to expect when swapping out the \textit{virtual} device that reads the input from your \textit{physical} device.
 
 		 Concluding this paper is a synopsis our what each member of our group worked on during this project, and how we felt about it.
 
 
-		 \section(Virtual Elevators/Schedulers)
+		 \section{Virtual Elevators/Schedulers}
             Elevators, or schedulers, are the abstract machines that organize input and output to other devices. If a program would like to write some characters to the hard drive, the program has to wait until the computer has processed the other programs that wanted to write first. The kernel shares the virtual resource (known as a "block") through scheduling. This is the premise of IO scheduling.
 
             The virtual blocks are placed into a data structure, and it is up to the developer to decide what algorithm to use; your algorithm may vary.
-            The No-Ops scheduler is a simple, yet powerful algorithm for reading and writing to random access memory. This is because it uses a FIFO queue. This algorithm may not be a good option for HDD, since the needle needs to spin to get to the right sector. 
+            The No-Ops scheduler is a simple, yet powerful algorithm for reading and writing to random access memory. This uses a FIFO queue. This algorithm may not be a good option for HDD, since the needle needs to spin to get to the right sector. 
 
-            The LOOK scheduling algorithm puts requests into list, and then scans back and forth to get to process the requests. This algorithm is found inside of the file /linux/llist.h. However, this algorithm still has a time bias with the time sharing on a device that takes time to spin (the hard drive).
+            The LOOK scheduling algorithm puts requests into list, and then scans back and forth to get to process the requests. This algorithm is found inside of the file /linux/list.h. However, this algorithm still has a time bias with the time sharing on a device that takes time to spin (the hard drive).
 
             CLOOK is a clever change to the LOOK scheduler, as it used a circularly linked list. This saves time by scanning in one direction without having to check data structure conditions. This is also helpful to the programmer, who only has to think about requests in one direction while designing an algorithm.
 
-        
-	
-		 \section(
+       \section{How to Implement a CLOOK scheduler in linux-yocto v3.19.2} 
+        \section{Concluding Thoughts}
+        Traversing the filesystem of the linux kernel is always a special moment in a developers life. Generally, if a solution for a modern software problem involves changing the IO scheduler, you are looking in the wrong place. However, this was a fantastic moment to compile a kernel with our custom CLOOK algorithm. There is no better way to understand the nature of the linux kernel then by swapping our their words with our files. Austin wrote most of the code for implementing the circularly linked list in the \textit{sstf-iosched.c} file. Kevin focused on compiling and managing the *tex files for the group. 
+		\bibliographystyle{IEEEtran}
+        \bibliography{refs}
         \end{document}
