@@ -43,22 +43,28 @@
 		
        \pagebreak
        \section{Introduction }
-		 In this project, we were asked test the stability of the I/O elevators of the linux-yocto kernel \url(git.yoctoproject.org/cgit.cgi/linux-yocto/tree/drivers?id=v3.19.2). Instintively, we took turns testing a new elavating device with our body weight until it broke. 
+		 In this project, we were asked test the stability of the I/O elevators of the linux-yocto kernel \url(git.yoctoproject.org/cgit.cgi/linux-yocto/tree/drivers?id=v3.19.2). Instinctively, we took turns testing a new elevating device with our body weight until it broke. 
 
-		 The three main data structures that will be mentioned are Linked Lists, Queues, and Binary Search Trees.
-
-		 This paper will first cover the functionality of an I/O elavator, and a few examples of modern input/output algorithms. 
-		 Next, this paper will illuminate the current I/O elavator (FIFO NO-OP) that is in the file system specified above. 
+		 The primary data structure for the IO elevator algorithm that we are using is the: (http://git.yoctoproject.org/cgit.cgi/linux-yocto/tree/include/linux/llist.h?id=v3.19.2).
+         Using this predefined linked list data structure in the linux kernel, our team implemented a CLOOK algorithm
+		 This paper will first cover the functionality of an I/O elevator, and a few examples of modern input/output algorithms. 
+		 Next, this paper will illuminate the current I/O elevator (FIFO NO-OP) that is in the file system specified above. 
 		 With this information, our team will describe our experiences implementing the LOOK I/O Scheduler, and what to expect when swapping out the \textit(virtual) device that reads the input from your \textit(physical) device.
 
-		 Concluding this paper is a synopis our what each member of our group worked on during this project, and how we felt about it.
+		 Concluding this paper is a synopsis our what each member of our group worked on during this project, and how we felt about it.
 
 
-		 \section(Some Virtual Devices)
-		 This section will cover what devices are virtually exisitant in the linux abstract machine.
 		 \section(Virtual Elevators/Schedulers)
-		 \subsection(The No-Op Elevator)
-		 \subsection(The LOOK/C-LOOK Elevator)
+            Elevators, or schedulers, are the abstract machines that organize input and output to other devices. If a program would like to write some characters to the hard drive, the program has to wait until the computer has processed the other programs that wanted to write first. The kernel shares the virtual resource (known as a "block") through scheduling. This is the premise of IO scheduling.
 
+            The virtual blocks are placed into a data structure, and it is up to the developer to decide what algorithm to use; your algorithm may vary.
+            The No-Ops scheduler is a simple, yet powerful algorithm for reading and writing to random access memory. This is because it uses a FIFO queue. This algorithm may not be a good option for HDD, since the needle needs to spin to get to the right sector. 
+
+            The LOOK scheduling algorithm puts requests into list, and then scans back and forth to get to process the requests. This algorithm is found inside of the file /linux/llist.h. However, this algorithm still has a time bias with the time sharing on a device that takes time to spin (the hard drive).
+
+            CLOOK is a clever change to the LOOK scheduler, as it used a circularly linked list. This saves time by scanning in one direction without having to check data structure conditions. This is also helpful to the programmer, who only has to think about requests in one direction while designing an algorithm.
+
+        
+	
 		 \section(
         \end{document}
