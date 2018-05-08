@@ -134,6 +134,26 @@ static int sstf_dispatch(struct request_queue *rq, int force)
 	return 0;
 }
 
+static struct request *
+sstf_former_req(struct request_queue *q, struct request *rq)
+{
+	struct sstf_data *sd = q->elevator->elevator_data;
+
+	if(rq->queuelist.prev == &sd->queue)
+		return NULL;
+	return list_entry(rq->queuelist.prev, struct request, queuelist);
+}
+
+static struct request *
+sstf_latter_req(struct request_queue *q, struct request *rq)
+{
+	struct sstf_data *sd = q->elevator->elevator_data;
+
+	if(rq->queuelist.next == &sd->queue)
+		return NULL;
+	return list_entry(rq->queuelist.next, struct request, queuelist);
+}
+
 
 /*		Elevator Data Structure		*/
 
@@ -150,6 +170,8 @@ static struct elevator_type elevator_sstf = {
 		.elevator_add_req_fn 	= sstf_add_queue, /*add an item to the elevators list*/
 		.elevator_merge_req_fn 	= sstf_merged_req, /*merge. those. requests. */
 		.elevator_dispatch_fn 	= sstf_dispatch, /* */
+		.elevator_former_req_fn = sstf_former_req, /* */
+		.elevator_latter_req_fn = sstf_latter_req, /* */
 	},
 	.elevator_name = "SSTF",
 	.elevator_owner = THIS_MODULE,
