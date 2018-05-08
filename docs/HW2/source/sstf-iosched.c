@@ -107,8 +107,12 @@ static void sstf_add_queue(struct request_queue *rq, struct request *r)
 }
 
 /*
- *
+ * merge the requests
  */
+static void sstf_merged_req(struct request_queue *rq, struct request *r, struct request *next) 
+{
+	list_del_init(&next->queuelist);
+}
 
 
 /*		Elevator Data Structure		*/
@@ -124,7 +128,7 @@ static struct elevator_type elevator_sstf = {
 		.elevator_init_fn 	= sstf_init_queue, /*initialize the elevator */
 		.elevator_exit_fn 	= sstf_exit_queue, /*free the elevator*/
 		.elevator_add_req_fn 	= sstf_add_queue, /*add an item to the elevators list*/
-
+		.elevator_merge_req_fn 	= sstf_merged_req,
 	},
 	.elevator_name = "SSTF",
 	.elevator_owner = THIS_MODULE,
