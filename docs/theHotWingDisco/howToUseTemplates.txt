@@ -1,0 +1,10 @@
+Hi team.
+
+
+I used ' chmod 444 *' to change the permissions of the files to read only. 
+This is so that we can reuse these files whenever we need to make a document.
+
+
+The refs.bib have my sources for one of my other papers, so you can see what references look like. 
+
+Ideally, we all add sources as we use them. That way, when we need to make a final paper, we can find our sources in constant time ( O(n) )
