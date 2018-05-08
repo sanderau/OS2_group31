@@ -31,6 +31,9 @@ struct sstf_data {
 
 /*	Functions	*/
 
+/*
+ * this is the initailize function for the elevator
+ */
 static int sstf_init_queue(struct request_queue *rq, struct elevator_type *et)
 {
 	struct sstf_data *sd;
@@ -64,6 +67,18 @@ static int sstf_init_queue(struct request_queue *rq, struct elevator_type *et)
 
 }
 
+/*
+ * This function is in charge of freeing the memory used by
+ * this function
+ */
+static void sstf_exit_queue(struct elevator_queue *el_queue)
+{
+	struct sstf_data *data = el_queue->elevator_data;
+
+	BUG_ON(!list_empty(&data->queue));
+	kfree(data);
+}
+
 
 /*		Elevator Data Structure		*/
 
@@ -72,10 +87,11 @@ static struct elevator_type elevator_sstf = {
 	 * ops - the operations of the newly defined elevator type
 	 * elevator_name - name of the newly written elevator
 	 * elevator_owner - module that owns this elevator. 
-	 * * Prevents premature termination by kernel.
+	 * * Prevents premature termination by kerdnel.
 	 */
 	.ops = {
 		.elevator_init_fn 	= sstf_init_queue, /*initialize the elevator */
+		.elevator_exit_fn 	= sstf_exit_queue, /*free the elevator*/
 
 	},
 	.elevator_name = "SSTF",
