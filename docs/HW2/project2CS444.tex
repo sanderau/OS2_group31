@@ -56,6 +56,7 @@
 		 This paper will first cover the functionality of an I/O elevator, and a few examples of modern input/output algorithms. 
 		 Next, this paper will illuminate the current I/O elevator (FIFO NO-OP) that is in the file system specified above. 
 		 With this information, our team will describe our experiences implementing the LOOK I/O Scheduler, and what to expect when swapping out the \textit{virtual} device that reads the input from your \textit{physical} device.
+         Then we will describe how virtual operating systems work
 
 		 Concluding this paper is a synopsis our what each member of our group worked on during this project, and how we felt about it.
 
@@ -69,26 +70,44 @@
             The LOOK scheduling algorithm puts requests into list, and then scans back and forth to get to process the requests. This algorithm is found inside of the file /linux/list.h. However, this algorithm still has a time bias with the time sharing on a device that takes time to spin (the hard drive).
 
             CLOOK is a clever change to the LOOK scheduler, as it used a circularly linked list. This saves time by scanning in one direction without having to check data structure conditions. This is also helpful to the programmer, who only has to think about requests in one direction while designing an algorithm.
-
-       \section{Purpose of the Assignment}
-            The purpose of the assignment, in our opinion, was to gain a better understanding of how most current linux block I/O schedulers work.
             
-        \section{Plan of Attack}
+        \section{Version Control Log}
+        
+        \section{Work Log}
+            
+        \section{Questions}
+        
+            In the section below we will answer the list of questions assigned to us on canvas.
+
+        \subsection{Purpose of the Assignment}
+            The purpose of the assignment, in our opinion, was to gain a better understanding of Linux kernel modules worked. This assignment had us learning about how structures are generally implemented across many different branches of the OS. This knowledge helped us gain a better understanding of how each subsection of an operating system works. This assignment then drew us closer to the assignment of how I/O schedulers work within Operating systems.
+            
+        \subsection{Plan of Attack}
             The first thing I did when approaching this problem was to try and get a better idea of the big picture when it comes to I/O schedulers before I got lost in the details of actual implementations. I read the text book \textit{Linux Kernel Development, 3rd ed.}\cite{Linux-Kernel-Development:2} and listened to the professors lectures. After understanding how the I/O scheduler worked I then went and learned the different implementations (No-Op, deadline, fair scheduling, etc.) and learned their respective advantages and disadvantages. After I got a handle on that I then had to learn how to write and actual module for a Linux Kernel. I found the online resource \textit{The Linux Kernel Module Programming Guide}\cite{tldp-web:3}, and found it very useful for understanding the code I had to write. While using the guide I constantly was looking at the noop-ioschded.c implementation so I could understand what the author wrote and why.
             
             Once I had a grasp of what I/O schedulers are and how to write them I then started diving into the code to understand what previous authors wrote and why. I walked line through line of the NOOP I/O scheduler and sourced each function call or data reference to its library using \textit{Elixir Cross Referencer}\cite{bootlin:4}. With bootlin I could find the actual line where the functions or data type was declared and written to fully understand its purpose and implementation.
             
             After having completed all these steps I was ready to write the code. I had several points of reference open when writing and just wrote the functionality one line at a time. I was constantly compiling to make sure my code had no syntax errors, and just wrote the module till it was fully implemented and done.
             
-        \section{Ensuring the Results.}
-            The first thing I did before even thinking of running the program was making sure my completed module could compile with no errors. Pulling a make file from the Module Programming Guide\cite{tldp-web:2} I wrote a new makefile to ensure I could compile my module with no syntax error or warnings. Once I compiled the module I then moved on to compiling the entire Kernel again with modified Kconfig.iosched and Makefiles to include my newly created I/O scheduler.
+        \subsection{Ensuring the Results.}
+            The first thing I did before even thinking of running the program was making sure my completed module could compile with no errors. Pulling a make file from the Module Programming Guide \cite{tldp-web:3} I wrote a new makefile to ensure I could compile my module with no syntax error or warnings. Once I compiled the module I then moved on to compiling the entire Kernel again with modified Kconfig.iosched and Makefiles to include my newly created I/O scheduler.
             
             I allotted four cores to its compilation and recompiled the entire Kernel. After a few minutes of compilation the kernel recompiled with no new errors or warning. After that it was time to boot the new operating system using QEMU.
             
-        \section{What We Learned}
-            There was a lot to take from this assignment. We only barely scratched the surface of writing modules and block I/O schedulers as well. The big take aways from this assignmnet was more big picture stuff. 
+        \subsection{What We Learned}
+            There was a lot to take from this assignment. We only barely scratched the surface of writing modules and block I/O schedulers as well. The big take aways from this assignment was more big picture stuff. 
             
-            We learned the difference between between schedulering algorithms. LOOK is a scheduler that is very similar the SSTF scheduler except that it avoids starvation. It will travel back and forth across the disk organizing the list in a way where the scheduler will always hit the next closest sector on the disk minimizing the time it spend searching. CLOOK is similar to LOOK except for the fact it travels in only one direction, either out towards the disk or outside towards inside, this takes advantage of the fact the arm of the disk is much faster traversing large distances and avoids starvation of sectors on the edges due to the nature of the algorithm hitting the edges more often.
+            We learned the difference between between scheduling algorithms. LOOK is a scheduler that is very similar the SSTF scheduler except that it avoids starvation. It will travel back and forth across the disk organizing the list in a way where the scheduler will always hit the next closest sector on the disk minimizing the time it spend searching. CLOOK is similar to LOOK except for the fact it travels in only one direction. This means that if there is a cluster of requests along the edge the arm won't allow the other requests to be slowed down when servicing a cluster of edge requests. This means that CLOOK gets a more equally balanced service time than LOOK does.
+            
+            Deadline's focus is to make sure starvation does not happen. It has two queues which contain read and write requests respectively. Then it has one last queue which contains all the requests with respect to the sector number. It then services requests according to which process in the queue is closest to it's deadline. This means that if processes have certain required time constraints they will be serviced according to those deadlines. This allows for a psudo-fixed priority schedulers. 
+            
+            Finally I learned about completely fair queueing. This algorithm places requests into queues according to the process that requested it. It then allocates a certain amount of time for each queue to spend reading or writing. Different processes can be assigned different priorities increasing or decreasing the amount of time allocated to the process for reading or writing to the disk. For example if you had a high priority process you could assign it a high priority, so when the scheduler assigns time slices to each queue the queue with the higher priorities will be allowed to spend more time with the disk. Ensuring the everything is fair and all processes get the correct amount of relative time on the disk.
+            
+            This then brings us to how the Qemu commands were changed. We removed the command "if=virtio". This command installs the Virtio drivers. Virtio is an I/O virtualization system. This is a system meant to interact with the hypervisors, hypervisors run the virtual machines. When using Virtio the operating system running on the virtual machine will no longer have "direct contact" with the hardware virtaulization. This means that Virtio will be adding a level of abstraction in between the hypervisor and the host machine. They call this a guest-hypervisor connection. This adds what virtio calls "para-drivers". These para-drivers allow for virtualized operating systems to get better performance. In this case however, we end up losing control over the virtualized hardware. This effect causes us to not handle exactly how we handle our virtual devices. Which in turn causes our I/O scheduler to break.
+            
+            Virtio has a driver for each device that is being virtualized by the operating system. The Virtio system also implements it's own buffer system for how the front-end drivers(Operating system running on the virtual machine) communicates with hypervisor(the program that is simulating hardware). This means that we would need to specially design our I/O scheduler to work with Virtio. This would remove from our learning about Operating Systems and provide a level of abstraction that isn't really there when working with non-virtualized operating systems.
+            
+        \subsection{How to Grade}
         
         \section{Concluding Thoughts}
         Traversing the filesystem of the linux kernel is always a special moment in a developers life. Generally, if a solution for a modern software problem involves changing the IO scheduler, you are looking in the wrong place. However, this was a fantastic moment to compile a kernel with our custom CLOOK algorithm. There is no better way to understand the nature of the linux kernel then by swapping our their words with our files. Austin wrote most of the code for implementing the circularly linked list in the \textit{sstf-iosched.c} file. Kevin focused on compiling and managing the *tex files for the group. 
