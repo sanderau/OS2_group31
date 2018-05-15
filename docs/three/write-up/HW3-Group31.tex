@@ -19,9 +19,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
  	\begin{center}
-	\huge\bf{ Homework 1:} 
+	\huge\bf{ Homework 3:} 
    
-    \large\textbf{\textit{ PUT TITLE HERE }}\par
+    \large\textbf{\textit{ The Crypt Keeper's Key }}\par
      
     
     
@@ -41,5 +41,18 @@
  		\vfill
 
        \pagebreak
-       \section{How we built the Yocto Kernel on our Class Server}
+       \section{ Introduction}
+	The purpose of the assignment is to write a RAM disk driver that allocates some memory as a block device. Our group will once again descend into the depths of the kernel and unlock the crypto API.
+	The file system that needs to be created is an ext2 file system. Some useful crypto tools that we will be using are One time Pad, SSHKEYGEN, and the service SSH. To protect our information that is sent from our machine, we need to make sure that our communication with the server is protected. This method is dependent on trust between two machines. 
+	Whenever you share an RSA key over SSH, the server will remember the computer and keep the user from entering in credentials.
+	A human can make errors if they do not realize they have accidentally SSH'd over to a different server without typing in their credenitals. 
+
+	This is useful if you have a "headless" (no peripheral) computer, and need to SSH many times while working. This can save time for the developer, but the programmer can easily forget when they have shared a key with a computer.
+	\section{ Premise of the Task }
+	
         \end{document}
+
+
+https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2
+
+https://www.khanacademy.org/computing/computer-science/cryptography/crypt/p/perfect-secrecy-exploration
