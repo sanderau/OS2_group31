@@ -42,17 +42,18 @@
 
        \pagebreak
        \section{ Introduction}
-	The purpose of the assignment is to write a RAM disk driver that allocates some memory as a block device. Our group will once again descend into the depths of the kernel and unlock the crypto API.
-	The file system that needs to be created is an ext2 file system. Some useful crypto tools that we will be using are One time Pad, SSHKEYGEN, and the service SSH. To protect our information that is sent from our machine, we need to make sure that our communication with the server is protected. This method is dependent on trust between two machines. 
-	Whenever you share an RSA key over SSH, the server will remember the computer and keep the user from entering in credentials.
-	A human can make errors if they do not realize they have accidentally SSH'd over to a different server without typing in their credenitals. 
+	The purpose of the assignment is to find a RAM block driver that allocates some memory as a block device. Our group will once again descend into the depths of the kernel and unlock the crypto API.
+	The file system that needs to be created is an ext2 file system. Some useful crypto tools that we will be using are One time Pad, SSHKEYGEN, and the service SSH. To protect a connection over SSH, the host machine needs to verify the integrity of the client. 
+	When a client shares an RSA key over SSH, the server will remember the computer and keep the user from entering in credentials.
+	A human can make errors if they do not realize they have accidentally SSH'd over to a different server without typing in their credentials. 
 
 	This is useful if you have a "headless" (no peripheral) computer, and need to SSH many times while working. This can save time for the developer, but the programmer can easily forget when they have shared a key with a computer.
 	\section{ Premise of the Task }
-	
+	The Resource \url{https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2} is how our group will share keys from our shell in OS2, to the yocto kernel.
+
+    This is a good video re-explaining how One Time Pad Encryption works: \url{ https://www.khanacademy.org/computing/computer-science/cryptography/crypt/p/perfect-secrecy-exploration}
         \end{document}
 
 
-https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2
 
-https://www.khanacademy.org/computing/computer-science/cryptography/crypt/p/perfect-secrecy-exploration
+
