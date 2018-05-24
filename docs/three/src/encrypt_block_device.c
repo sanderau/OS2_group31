@@ -9,15 +9,14 @@ MODULE_LICENSE("Dual BSD/GPL");
 
 static int hello_init(void)
 {
-	printk(KERN_ALERT "Hello, world\n");
+	void *kmalloc(size_t size, int flags);
 	return 0;
 }
 
 static void hello_exit(void)
 {
 
-	void *kmalloc(size_t size, int flags);
-	printk(KERN_ALERT "Goodbye, cruel world\n");
+	kfree(const void* objp);
 }
 
 module_init(hello_init);
