@@ -42,16 +42,37 @@
 
        \pagebreak
        \section{ Introduction}
-	The purpose of the assignment is to find a RAM block driver that allocates some memory as a block device. Our group will once again descend into the depths of the kernel and unlock the crypto API.
-	The file system that needs to be created is an ext2 file system. Some useful crypto tools that we will be using are One time Pad, SSHKEYGEN, and the service SSH. To protect a connection over SSH, the host machine needs to verify the integrity of the client. 
+	The purpose of the assignment is to learn about how to use the crypto API of the linux-yocto kernel(v3.19.2). 
+	This paper will describe a linux patch file that adds encryption to a RAM Disk device driver.
+	We will use a key (generated from \url{https://git.yoctoproject.org/cgit.cgi/linux-yocto/tree/crypto/asymmetric_keys/rsa.c?id=v3.19.2 } ) that will be the only parameter on the kernel module.
+	To demonstrate the functionality, we will move the RAM device driver into the running VM, and make a small ext2 file system. 
+
+	The kernel sometimes "barks" at the user when they try and add random files that allocate memory. It is more secure if the kernel doesnt let outside sources allocate RAM memory, even if the user owns the virtual machine.
+	Sometimes, a file may be inserted into the work queue from an outside source, and start doing some memory things.
+	A block device driver that has been inserted could be encrypted, and appear to be doing random tasks.
+	It is up to the humans to monitor the work queue, so that robots cannot cut the line. 
+
+	Have you ever been in line for a movie, and someone goes to the front of the line, buys a ticket, and then starts playing WiiSports on the screen? 
+	Our group will document how to do this on linux-yocto kernel.
+	
+	\section{ Some useful tools}	
+	"One-time Pad" Encryption can even be applied to a block device, protecting the program during execution.
+	The  Our group will once again descend into the depths of the kernel and unlock the crypt.
+	The file system that needs to be created is an ext2 file system. Some useful crypto tools that we will be using are One time Pad, \it{ssh-keygen}, and the service \it{SCP}. To protect a connection over SSH, the host machine needs to verify the integrity of the client. 
 	When a client shares an RSA key over SSH, the server will remember the computer and keep the user from entering in credentials.
 	A human can make errors if they do not realize they have accidentally SSH'd over to a different server without typing in their credentials. 
 
 	This is useful if you have a "headless" (no peripheral) computer, and need to SSH many times while working. This can save time for the developer, but the programmer can easily forget when they have shared a key with a computer.
-	\section{ Premise of the Task }
-	The Resource \url{https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2} is how our group will share keys from our shell in OS2, to the yocto kernel.
+	\section{ Some links for the boys }
+	The Resource \url{https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2} is how our group will share keys from our shell into the running linux-yocto kernel.
+
+	
 
     This is a good video re-explaining how One Time Pad Encryption works: \url{ https://www.khanacademy.org/computing/computer-science/cryptography/crypt/p/perfect-secrecy-exploration}
+
+
+	\section{ Our Group's Approach }
+	Here we talk about how we did it, and what the kernel threw at us while we tried this.
         \end{document}
 
 
