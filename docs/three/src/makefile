@@ -1,12 +1,7 @@
-TARGET  := encrypt_block_device
-WARN    := -W -Wall -Wstrict-prototypes -Wmissing-prototypes
-INCLUDE := -isystem /lib/modules/`uname -r`/build/include
-CFLAGS  := -O2 -DMODULE -D__KERNEL__ ${WARN} ${INCLUDE}
-CC      := gcc-3.0
-	
-${TARGET}.o: ${TARGET}.c
+obj-m += encrypt_block_device.o
 
-.PHONY: clean
+all:
+    make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 
 clean:
-	rm -rf ${TARGET}.o
+    make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
