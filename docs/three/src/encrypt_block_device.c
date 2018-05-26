@@ -6,6 +6,7 @@
 #include <linux/init.h> /* Module_init and module_exit macros*/
 #include <linux/list.h> /* list_head data structure */
 #include <linux/kernel.h> /* */
+#include <linuxBRD.c>
 
 #define MOD_AUTHORS "Austin Sanders, Zachary Tusing, Kevin Talik"
 #define MOD_DESC "An SSTF (Shortest Seek Time First) I/O scheduler"
