@@ -9,9 +9,9 @@
 % 1. Fill in these details
 \def \CapstoneTeamName{		Operating Systems II}
 \def \CapstoneTeamNumber{		Group 31}
-\def \GroupMemberOne{			Kevin Talik}
+\def \GroupMemberOne{			Zach Tusing}
 \def \GroupMemberTwo{			Austin Sanders}
-\def \GroupMemberThree{			Zach Tusing}
+\def \GroupMemberThree{			Kevin Talik}
 \def \CapstoneProjectName{		Homework 1}
 
 			
@@ -41,43 +41,31 @@
  		\vfill
 
        \pagebreak
-       \section{ Introduction}
-	The purpose of the assignment is to learn about how to use the crypto API of the linux-yocto kernel(v3.19.2). 
-	This paper will describe a linux patch file that adds encryption to a RAM Disk device driver.
-	We will use a key (generated from \url{https://git.yoctoproject.org/cgit.cgi/linux-yocto/tree/crypto/asymmetric_keys/rsa.c?id=v3.19.2 } ) that will be the only parameter on the kernel module.
-	To demonstrate the functionality, we will move the RAM device driver into the running VM, and make a small ext2 file system. 
-
-	The kernel sometimes "barks" at the user when they try and add random files that allocate memory. It is more secure if the kernel doesnt let outside sources allocate RAM memory, even if the user owns the virtual machine.
-	Sometimes, a file may be inserted into the work queue from an outside source, and start doing some memory things.
-	A block device driver that has been inserted could be encrypted, and appear to be doing random tasks.
-	It is up to the humans to monitor the work queue, so that robots cannot cut the line. 
-
-	Have you ever been in line for a movie, and someone goes to the front of the line, buys a ticket, and then starts playing WiiSports on the screen? 
-	Our group will document how to do this on linux-yocto kernel.
-	
-	\section{ Some useful tools}	
-	"One-time Pad" Encryption can even be applied to a block device, protecting the program during execution.
-	The  Our group will once again descend into the depths of the kernel and unlock the crypt.
-	The file system that needs to be created is an ext2 file system. Some useful crypto tools that we will be using are One time Pad, \it{ssh-keygen}, and the service \it{SCP}. To protect a connection over SSH, the host machine needs to verify the integrity of the client. 
-	When a client shares an RSA key over SSH, the server will remember the computer and keep the user from entering in credentials.
-	A human can make errors if they do not realize they have accidentally SSH'd over to a different server without typing in their credentials. 
-
-	This is useful if you have a "headless" (no peripheral) computer, and need to SSH many times while working. This can save time for the developer, but the programmer can easily forget when they have shared a key with a computer.
-	\section{ Some links for the boys }
-	The Resource \url{https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2} is how our group will share keys from our shell into the running linux-yocto kernel.
-
-	An SBD is a "Simple Block Driver" \cite{corbet_2003}	
-
-    This is a good video re-explaining how One Time Pad Encryption works: \url{ https://www.khanacademy.org/computing/computer-science/cryptography/crypt/p/perfect-secrecy-exploration}
-
-
+       \section{ Purpose of this assignment }
+		This assignment had two key purposes. The first was to understand exactly how ram disk drivers work and how to encrypt the data. The second was to dig even deeper into the Linux libraries and be able to understand the underlaying parts of Linux and how these files come together to create an operating system. This assignment gives us a glimpse into so many different aspects of the Linux kernel and allows for a better understanding of what is truly going on underneath the hood of a computer.
 	\section{ Design }
-
-	\subsection{Implementation of BSD from original linux kernel}
-
-	\subsection{Using linux pre-implemented crypto api}
+    
+    	For the design of this code we decided to take a very minimalistic approach. We took the easiest route to completing this project. This means only touching on the very necessities that are required for a RAM Disc device driver. This means that we are only going to use a few key functions to do what we need to do. These functions provide the following functionalities: Read/Write, Encryption, Queuing, Input and Output Control, Initialization, and Exit.
+        
+	\subsection{Read/Write}
+    So with the read and write operations on our Linux machine we decided to handle the reading and writing with a simple memory allocation into ram and then handling each individual request to write by encrypting the data sent to ram with memcopy. This allowed us a simple and easy way to handle individual requests while also making sure all memory was encrypted at the time. We handled read requests by just checking the read/write bit and seeing which way memory was being copied. This time decryption will be handled after reading out since we will only be handling the buffer. This provided us with a simple execution of a read/write function and our encryption functionality built in.
+    \subsection{Encryption}
+    
+    \subsection{Request Queue}
+    We handled request queuing by implementing the simplest request queue. This was done with the function \begin{verbatim} struct request *elv_next_request(struct request_queue *queue) \end{verbatim}. This function triggers a series of checks to see if the request in the queue actually identifies as a valid request for the driver. If it does validate then it will send it to the read/write function which handles data encryption and Input/Output.
+	\subsection{I/O CNTL}
+	We have implemented a standard device driver I/O control function. Since this is required for registering devices. This function describes and handles device information for the user.
+    
+	\subsection{INIT}
+    Our Init function is probably the most complex. This is due to the different things that we need to initialize when setting up the driver. Our driver initializes the ram using Kmalloc. It then intializes a block queue using \begin{verbatim} struct request_queue * blk_init_queue (	request_fn_proc * rfn, spinlock_t * lock); \end{verbatim} This request queue is established and will run requests through our driver. We then establish our struct and initialize the data for our disk and then return 0. If there was an error it jumps to the bottom to execute kfrees to allow for easy and non-messy cleanup.
+    
+    \subsection{EXIT}
+    
+    This exit function is incredibly simple and consists of only five calls. The first call is \begin{verbatim}  void del_gendisk(struct gendisk *disk) \end{verbatim} which is a call to remove the disk from the active disk queue. This call cleans up all data associated with said disk and stops all future requests. The second call is to \begin{verbatim}  void put_disk(struct gendisk *disk) \end{verbatim} This call actually makes it so the disk is no longer accessible. The next call is to \begin{verbatim}  unregister_blkdev(Int, char*) \end{verbatim} This call will unregister the major number assigned to the block device. This unregisters the major:minor pairing. The fourth call cleans up the queue which will remove all nodes from the queue. The final call frees the memory allocated for the disk driver.
 
 	\section{Design Decisions}
+    
+    There are 
 
 	\section{Testing correctness}
 
@@ -99,8 +87,3 @@
 	}
 	}
 	}
-	}
-
-
-
-

@@ -16,7 +16,8 @@ References:
 
 * [0] - This is the linux implementation of BRD
 	** https://github.com/torvalds/linux/blob/master/drivers/block/brd.c
-* [1] -
+* [1] - This has a simple block driver that we modeled our system off of.
+	** https://lwn.net/Articles/58719/
 */
 
 MODULE_LICENSE("Dual BSD/GPL");
@@ -33,7 +34,7 @@ static struct sbd_device {
     struct gendisk *gd;
 } Device;
 
-static void sbd_transfer(struct sbd_device *dev, unsigned long sector,
+static void sbd_readWrite(struct sbd_device *dev, unsigned long sector,
 		unsigned long nsect, char *buffer, int write)
 {
     unsigned long offset = sector*hardsect_size;
@@ -64,7 +65,9 @@ static void sbd_transfer(struct sbd_device *dev, unsigned long sector,
 static void sbd_request(request_queue_t *q)
 {
     struct request *req;
-
+    /*
+    https://lwn.net/Articles/333620/
+    */
     while ((req = elv_next_request(q)) != NULL) {
 	if (! blk_fs_request(req)) {
 	    printk (KERN_NOTICE "Skip non-CMD request\n");
