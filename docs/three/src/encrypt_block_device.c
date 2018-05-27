@@ -115,8 +115,8 @@ static int __init sbd_init(void)
 	goto out;
     }
 /*
- * And the gendisk structure.
- */
+	I need to reformat this alloc_disk function
+*/
     Device.gd = alloc_disk(16);
     if (! Device.gd)
 	goto out_unregister;
