@@ -62,8 +62,8 @@ int sbd_ioctl (struct inode *inode, struct file *filp,
 	struct hd_geometry geo;
 
 	switch(cmd) {
-		//this should be where encryption will go I might need to write another encrypt
-		//https://kernel.readthedocs.io/en/sphinx-samples/crypto-API.html
+		/*this should be where encryption will go I might need to write another encrypt
+		https://kernel.readthedocs.io/en/sphinx-samples/crypto-API.html*/
 	    case HDIO_GETGEO:
 		size = Device.size*(hardsect_size/KERNEL_SECTOR_SIZE);
 		geo.cylinders = (size & ~0x3f) >> 6;
