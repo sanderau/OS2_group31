@@ -40,17 +40,23 @@ static void sbd_transfer(struct sbd_device *dev, unsigned long sector,
     unsigned long nbytes = nsect*hardsect_size;
     
     if ((offset + nbytes) > dev->size) {
-	printk (KERN_NOTICE "sbd: Beyond-end write (%ld %ld)\n", offset, nbytes);
+	printk (KERN_NOTICE "TOO LARGE OF A WRITE/READ TO DRIVER (%ld %ld)\n", offset, nbytes);
 	return;
     }
+    /*this should be where encryption will go I might need to write another encrypt
+		https://kernel.readthedocs.io/en/sphinx-samples/crypto-API.html*/
     if(write)
     {
+    	/* encrypt buffer and put into dev->data*/
+
     	/* Write from the buffer to the block*/
     	memcpy(dev->data + offset, buffer, nbytes);
     }
     else
 	{
-		/*Write from the block into the buffer*/
+		/* encrypt buffer and put into dev->data*/
+
+		/*Read from the block into the buffer*/
 		memcpy(buffer, dev->data + offset, nbytes);
 	}
 }
@@ -83,8 +89,6 @@ int sbd_ioctl (struct inode *inode, struct file *filp,
 	struct hd_geometry geo;
 
 	switch(cmd) {
-		/*this should be where encryption will go I might need to write another encrypt
-		https://kernel.readthedocs.io/en/sphinx-samples/crypto-API.html*/
 	    case HDIO_GETGEO:
 		size = Device.size*(hardsect_size/KERNEL_SECTOR_SIZE);
 		geo.cylinders = (size & ~0x3f) >> 6;
