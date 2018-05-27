@@ -134,7 +134,7 @@ static int __init sbd_init(void)
   out_unregister:
     unregister_blkdev(major_num, "sbd");
   out:
-    vfree(Device.data);
+    kfree(Device.data);
     return -ENOMEM;
 }
 
