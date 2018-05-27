@@ -45,17 +45,21 @@
 
         Security-wise, it is important to learn about the vulnerabilities of files transferred to a running operating system. If the kernel cannot verify the integrity of the host, the kernel can accept files that can be inserted into the work queue of a processor. Additionally, if the module is encrypted, the owner of the OS can not see what the block device is running. 
 
-		This assignment had two key purposes. The first was to understand exactly how ram disk drivers work and how to encrypt the data. The second was to learn how crypto tools can be used to protect information on the computer. 
+		This assignment had two key purposes. The first was to understand exactly how ram disk drivers work and how to encrypt the data. The second was to learn how crypto tools can be used to protect information on the computer. Files that are encrypted are described as a "Trapdoor" algorithm. It is easy to write a cypher, but difficult for a computer to decode without a key. 
 
 	\section{ Design }
     
     	For the design of this code we decided to take a very minimalistic approach. This means only touching on the very necessities that are required for a RAM Disc device driver. This means that we are only going to use a few key functions to do what we need to do. These functions provide the following functionalities: Read/Write, Encryption, Queuing, Input and Output Control, Initialization, and Exit.
 
-    The only parameter of the kernel module is key used for encryption.
+    The only parameter of the kernel module is the key used for encryption. 
+    Since this key is public information, we will Asymmetric Key Generation (The RSA Algorithm) defined in \url{https://github.com/sanderau/OS2_group31/blob/master/linux-yocto-3.19.2/crypto/asymmetric_keys/ }
+    If the memory of a block device (that is made during runtime) is encrypted, and inserted into the work queue, it can be scheduled to be executed with kernel-owned processes.
         
 	\subsection{Read/Write}
-    So with the read and write operations on our Linux machine we decided to handle the reading and writing with a simple memory allocation into ram and then handling each individual request to write by encrypting the data sent to ram with memcopy. This allowed us a simple and easy way to handle individual requests while also making sure all memory was encrypted at the time. We handled read requests by just checking the read/write bit and seeing which way memory was being copied. This time decryption will be handled after reading out since we will only be handling the buffer. This provided us with a simple execution of a read/write function and our encryption functionality built in.
+    With the read and write operations on our Linux machine, we decided to handle the reading and writing with a simple memory allocation into ram and then handling each individual request to write by encrypting the data sent to ram with memcopy. This allowed us a simple and easy way to handle individual requests while also making sure all memory was encrypted at the time. We handled read requests by just checking the read/write bit and seeing which way memory was being copied. This time decryption will be handled after reading out since we will only be handling the buffer. This provided us with a simple execution of a read/write function and our encryption functionality built in.
     \subsection{Encryption}
+    \subsection{ One Time Pad Encryption }
+    \subsubsection{ The Asymmetric Key Generation }
     
     \subsection{Request Queue}
     We handled request queuing by implementing the simplest request queue. This was done with the function \begin{verbatim} struct request *elv_next_request(struct request_queue *queue) \end{verbatim}. This function triggers a series of checks to see if the request in the queue actually identifies as a valid request for the driver. If it does validate then it will send it to the read/write function which handles data encryption and Input/Output.
