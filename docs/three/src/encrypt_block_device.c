@@ -33,6 +33,27 @@ static struct sbd_device {
     struct gendisk *gd;
 } Device;
 
+static void sbd_transfer(struct sbd_device *dev, unsigned long sector,
+		unsigned long nsect, char *buffer, int write)
+{
+    unsigned long offset = sector*hardsect_size;
+    unsigned long nbytes = nsect*hardsect_size;
+    
+    if ((offset + nbytes) > dev->size) {
+	printk (KERN_NOTICE "sbd: Beyond-end write (%ld %ld)\n", offset, nbytes);
+	return;
+    }
+    if(write)
+    {
+    	/* Write from the buffer to the block*/
+    	memcpy(dev->data + offset, buffer, nbytes);
+    }
+    else
+	{
+		/*Write from the block into the buffer*/
+		memcpy(buffer, dev->data + offset, nbytes);
+	}
+}
 
 static void sbd_request(request_queue_t *q)
 {
