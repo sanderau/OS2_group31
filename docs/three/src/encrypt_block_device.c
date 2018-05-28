@@ -12,6 +12,7 @@
 #include <linux/init.h> /* Module_init and module_exit macros*/
 #include <linux/list.h> /* list_head data structure */
 #include <linux/kernel.h> /* */
+#include <linux/crypto.h> /* crypto calls */
 #include <linux/moduleparam.h> /* So we can have command line arguments (for a key) */
 
 #define MOD_AUTHORS "Austin Sanders, Zachary Tusing, Kevin Talik"
