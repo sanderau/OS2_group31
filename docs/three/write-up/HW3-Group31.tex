@@ -108,12 +108,242 @@
     
     The star in the command just represents what we named the module. Once the module is inside the kernel with the insert module command you should be able to use our written module like it is block device driver. To take the module out of the kernel you just use the rmmod and the module name to remove it from the kernel.\\
    \\ After we've inserted our device driver into the kernel we run the command \begin{verbatim} mkfs -t ext2 ~/ \end{verbatim} This will create an ext2 file system on our new device. This should be encrypted file system that has the read/write and decrypt/encrypt files respectively.
-    \section{VCS LOG}
     
     \section{WORK LOG}
     Zach and Austin started the implementation during the week of 5/14. We fished up our block device during the weekend of 5/26.
     
     We wrote the paper on 5/26 and 5/27 where Austin and Zach talked about their implementation and . Kevin wrote about encryption.
+    
+    \section{VCS LOG}
+    {\obeylines %
+    commit cf5d86c1bfb17bcfe544bfe886ed0273bb4a175c
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sun May 27 23:17:33 2018 -0700
+
+    finalize\\
+
+commit 4f1cbdb26a7dd4bac6a2c3cee148e2de2114a2e4
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Sun May 27 23:13:17 2018 -0700
+
+    forgot to reinclude a library. No idea how it went missing\\
+
+commit d3480bee5efb7a684187cb1ed4362640bea8385a
+Merge: 34faab7 6b8c4c8
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Sun May 27 23:00:30 2018 -0700
+
+    Merge branch 'master' of \url{https://github.com/sanderau/OS2_group31}\\
+
+commit 34faab71c673043851b405f8cdd336f099ca2729
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Sun May 27 23:00:14 2018 -0700
+
+    The complete module for a simple block driver with basic encryption\\
+
+commit 6b8c4c8880e4b3241b68d9a8738490e1843a7265
+Author: Kevin Talik <Kevin Talik>
+Date:   Sun May 27 22:10:33 2018 -0700
+
+    finalized the encryption section and added a working bibliography\\
+
+commit 2b7e0b513d8fc7f8f32d5c77ea9d5aa40aaee8a1
+Author: Kevin Talik <Kevin Talik>
+Date:   Sun May 27 17:05:05 2018 -0700
+
+    Added a section about the importance of using Asymmetric keys over symmetric keys\\
+
+commit d56be63445993299dc306551000d16124cf2de5b
+Author: Kevin Talik <Kevin Talik>
+Date:   Sun May 27 15:04:51 2018 -0700
+
+    Adding sections on RSA key generation, and the benefits of Asymmetric vs Symmetric Key generation\\
+
+commit 1c18452df7a4b531c684548446d6e5741ba9959d
+Author: Kevin Talik <Kevin Talik>
+Date:   Sun May 27 14:12:51 2018 -0700
+
+    Rephrased the purpose of the crypto assignment\\
+
+commit 87ace2179b812fb442812e084cc9368a620a22ac
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sun May 27 03:05:08 2018 -0700
+
+    small change\\
+
+commit cded7168a6cb8826159468e7dd280d8c331d1b46
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sun May 27 03:04:24 2018 -0700
+
+    Adding more code changes and mostly done paper.\\
+
+commit e1285d6e7d85a13d20d8ff5edd6dda00f52cc418
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sat May 26 22:45:55 2018 -0700
+
+    MORE COMMENTS\\
+
+commit f18fc2ce053ed9685d39922131af197b6c37cfa8
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sat May 26 22:43:45 2018 -0700
+
+    ading r/w function\\
+
+commit 35058b22ff0094ae20eafcf72bfb73e97804fef5
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sat May 26 22:32:00 2018 -0700
+
+    I think I got them all now\\
+
+commit b64e5108895b30c983a7afad886083043f4f71a6
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sat May 26 22:29:26 2018 -0700
+
+    Fixing comments I think\\
+
+commit 2653312c6b27ea8b9afff82935afbe0764a0f085
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sat May 26 22:27:53 2018 -0700
+
+    small change\\
+
+commit bf68698f550ceb85223c2a73275d08c0ed85d09f
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sat May 26 22:23:38 2018 -0700
+
+    Adding this file so austin can see it. Still working on modifing it so it accomplishes what we need. Not ready to compile. Still applying the block device and checking yocto systems to make sure it fits between these requirements\\
+
+commit 5c3c66eff924086e083d5924c8ae5c271c439b40
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Sat May 26 21:16:18 2018 -0700
+
+    User can now add their own key via command line if they choose to\\
+
+commit 34f02b12892b456c94c2a156fc4ced7bdac55807
+Merge: 9797708 48715b4
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Sat May 26 20:33:54 2018 -0700
+
+    Merge branch 'master' of \url{https://github.com/sanderau/OS2_group31}\\
+
+commit 9797708caba0902eb1012299ee3d12a0a6af1d7b
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Sat May 26 20:33:17 2018 -0700
+
+    Alright so the module skeleton now compiles. I can not get it to compile while including the linuxBRD file, but we will figure that out when we need functionality from it\\
+
+commit 48715b40e9f82d833a0bf269c9188f394230c2db
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Sat May 26 20:07:40 2018 -0700
+
+    Delete makefile\\
+
+commit b1c25681e34f52be1e85e679373e540d683043a6
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Sat May 26 20:07:04 2018 -0700
+
+    So I guess it matters how you name things when writing modules. Changing the makefile to have capital M because who ever made the compiler made it very clear that capital M makefile is the only way to \\
+
+commit d9167e96ab0c3eb6592c058e0de945995a5896e0
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sat May 26 10:10:01 2018 -0700
+
+    Adding outline to paper. This only includes a few changes to C file since the product I have still isn't compiling.\\
+
+commit a23c2a26963257df8a104ac79e22e3529f991a92
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Fri May 25 12:11:49 2018 -0700
+
+    Adding the linux implementation for testing with the yocto kernel. This is part of the original kernel that I have no rights to.\\
+
+commit 2296e45a4c878b6596424f3e4e68f5e795707818
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Wed May 23 21:46:20 2018 -0700
+
+    The\\
+
+commit e8509bdd80562a925f04cda4acc319718dd78153
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Wed May 23 21:04:09 2018 -0700
+
+    adding the makefile\\
+
+commit 215a2fe38a9f58dd92a9e0bf32e92b4b00a745ef
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Wed May 23 20:58:58 2018 -0700
+
+    Changing source to c\\
+
+commit 155f082e7245b314a4de651ae0f524fd00a6a896
+Author: Zachary Tusing <zttusing@protonmail.ch>
+Date:   Wed May 23 20:52:02 2018 -0700
+
+    Create disk driver file
+
+commit a46d85a6f5907185bc4604b321ec6f0a43374e12
+Author: Kevin Talik <talikk7@github.com>
+Date:   Wed May 23 18:10:36 2018 -0700
+
+    Added a source for SBD (Simple Block Driver), by corbet\\
+
+commit 123db2c2e54a9a861c60c3b7cbbdb435d35156e3
+Author: Kevin Talik <talikk7@github.com>
+Date:   Wed May 23 17:43:06 2018 -0700
+
+    Framed the introduction, and the outline\\
+
+commit 919d65066118e23eaebcd9773979a4daaaa25df2
+Author: Kevin Talik <Kevin Talik>
+Date:   Thu May 17 08:52:19 2018 -0700
+
+    Made some edits on the intro\\
+
+commit 99420307f41ed82d2eb0a3fe7d435680aa34f781
+Author: Kevin Talik <talikk7@github.com>
+Date:   Tue May 15 09:15:08 2018 -0700
+
+    Added an introduction... Probably wont use SSH in the end..\\
+
+commit 46880d0ab665af1b01c35fe1d679e3b0f1fedc9a
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Tue May 15 08:43:53 2018 -0700\\
+
+commit 155f082e7245b314a4de651ae0f524fd00a6a896
+Author: Zachary Tusing <zttusing@protonmail.ch>
+Date:   Wed May 23 20:52:02 2018 -0700
+
+    Create disk driver file\\
+
+commit a46d85a6f5907185bc4604b321ec6f0a43374e12
+Author: Kevin Talik <talikk7@github.com>
+Date:   Wed May 23 18:10:36 2018 -0700
+
+    Added a source for SBD (Simple Block Driver), by corbet\\
+
+commit 123db2c2e54a9a861c60c3b7cbbdb435d35156e3
+Author: Kevin Talik <talikk7@github.com>
+Date:   Wed May 23 17:43:06 2018 -0700
+
+    Framed the introduction, and the outline\\
+
+commit 919d65066118e23eaebcd9773979a4daaaa25df2
+Author: Kevin Talik <Kevin Talik>
+Date:   Thu May 17 08:52:19 2018 -0700
+
+    Made some edits on the intro\\
+
+commit 99420307f41ed82d2eb0a3fe7d435680aa34f781
+Author: Kevin Talik <talikk7@github.com>
+Date:   Tue May 15 09:15:08 2018 -0700
+
+    Added an introduction... Probably wont use SSH in the end..\\
+
+commit 46880d0ab665af1b01c35fe1d679e3b0f1fedc9a
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Tue May 15 08:43:53 2018 -0700
+
+    Adding the blank write up files\\
+}
     
         \end{document}
     }
