@@ -62,13 +62,15 @@
         One Time Pad Encryption \cite{khanAcademy} is a method of protecting messages by making a new, random key for every message.
         One Time Pad encryption is one of the strongest types of encryption, as there are many permutations of what a cypher could contain. 
         The strength of OTP is dependent on the integrity of the key to decrypt the cypher that is shared. 
-
         The problem with OTP is that when you use symmetric keys over asymmetric keys, someone in the middle can decypher messages \cite{asymmetric}.
 
         The RSA algorithm can provide a public key, and a private key between a host and client, protecting the integrity of a device.
+        Even if an external source finds a public key, the private key can encrypt messages from the host machine, and send to other devices that have a shared RSA key.
     
     \subsection{Request Queue}
-    We handled request queuing by implementing a simple request queue. This was done with the function \begin{verbatim} struct request *elv_next_request(struct request_queue *queue) \end{verbatim}. This function triggers a series of checks to see if the request in the queue actually identifies as a valid request for the driver. If it does validate then it will send it to the read/write function which handles data encryption and Input/Output.
+    We handled request queuing by implementing a simple request queue. This was done with the function \begin{verbatim} struct request *elv_next_request(struct request_queue *queue) \end{verbatim}. This function triggers a series of checks to see if the request in the queue identifies as a valid request for the driver. If it does validate then it will send it to the read/write function which handles data encryption and Input/Output.
+
+    In the crypto directory, we can specify what kind of encryption we want for this module. Since we trust the process sent from the client to the VM, the kernel will run it. 
 	\subsection{I/O CNTL}
 	We have implemented a standard device driver I/O control function, since this is required for registering devices. This function describes and handles device information for the user.
     
@@ -80,14 +82,12 @@
     This exit function is simple and consists of only five calls. The first call is \begin{verbatim}  void del_gendisk(struct gendisk *disk) \end{verbatim} which is a call to remove the disk from the active disk queue. This call cleans up all data associated with said disk and stops all future requests. The second call is to \begin{verbatim}  void put_disk(struct gendisk *disk) \end{verbatim} This call actually makes it so the disk is no longer accessible. The next call is to \begin{verbatim}  unregister_blkdev(Int, char*) \end{verbatim} This call will unregister the major number assigned to the block device. This unregisters the major:minor pairing. The fourth call cleans up the queue which will remove all nodes from the queue. The final call frees the memory allocated for the disk driver.
 
 	
-	\section{Testing correctness}
-        
-	\subsection{Testing outline}
-
+	\section{Testing}
+        To test that this LKM is working properly, we will move the module into the running VM, and insert the module into the request queue (the function name is specified in the Request Queue Subsection). This is to show that a RAM driver module can be received from an outside source, and put into an I/O elevator that the kernel will run.
 	\section{Command Log}
 
-	\section{VCS LOG}
-
+    \bibliographystyle{IEEEtran}
+    \bibliography{refs}
         \end{document}
 	}
 	}
