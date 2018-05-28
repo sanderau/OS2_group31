@@ -7,29 +7,29 @@
 \geometry{textheight=9.5in, textwidth=7in}
 
 % 1. Fill in these details
-\def \CapstoneTeamName{		Operating Systems II}
-\def \CapstoneTeamNumber{		Group 31}
-\def \GroupMemberOne{			Zach Tusing}
-\def \GroupMemberTwo{			Austin Sanders}
-\def \GroupMemberThree{			Kevin Talik}
-\def \CapstoneProjectName{		Homework 1}
+\def \CapstoneTeamName{     Operating Systems II}
+\def \CapstoneTeamNumber{       Group 31}
+\def \GroupMemberOne{           Zach Tusing}
+\def \GroupMemberTwo{           Austin Sanders}
+\def \GroupMemberThree{         Kevin Talik}
+\def \CapstoneProjectName{      Homework 3}
 
-			
+            
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
- 	\begin{center}
-	\huge\bf{ Homework 3:} 
+    \begin{center}
+    \huge\bf{ Homework 3:} 
    
     \large\textbf{\textit{ The Crypt Keeper's Key }}\par
      
     
     
-	\small{\bf CS 444 : \textit Operating Systems II, Oregon State University}\par
+    \small{\bf CS 444 : \textit Operating Systems II, Oregon State University}\par
     \small{\bf{Group 31}}
     
     
-    {\bf\textit{ Spring Term, PUT THE DATE, 2018} }
+    {\bf\textit{ Spring Term, 5/27, 2018} }
     
     
     {\small {\bf Prepared by:} \GroupMemberOne, \GroupMemberTwo, and \GroupMemberThree }
@@ -38,23 +38,21 @@
     %\begin{flushright}
     %\small{Figure 69. This is a caption}
     %\end{flushright}
- 		\vfill
+        \vfill
 
        \pagebreak
        \section{ Purpose of this assignment }
-
-        Security-wise, it is important to learn about the vulnerabilities of files transferred to a running operating system. If the kernel cannot verify the integrity of the host, the kernel can accept files that can be inserted into the work queue of a processor. Additionally, if the module is encrypted, the owner of the OS can not see what the block device is running.  
-
-		This assignment had two key purposes. The first was to understand exactly how ram disk drivers work and how to encrypt the data. The second was to learn how crypto tools can be used to protect information on the computer. Files that are encrypted are described as a "Trapdoor" algorithm. It is easy to write a cypher, but difficult for a computer to decode without a key. 
-
-	\section{ Design }
+        This assignment had two key purposes. The first was to understand exactly how ram disk drivers work and how to encrypt the data. The second was to learn how crypto tools can be used to protect information on the computer. Files that are encrypted are described as a "Trapdoor" algorithm. It is easy to write a cypher, but difficult for a computer to decode without a key.     
+        Security-wise, it is important to learn about the vulnerabilities of files transferred to a running operating system. If the kernel cannot verify the integrity of the host, the kernel can accept files that can be inserted into the work queue of a processor. Additionally, if the module is encrypted, the owner of the OS can not see what the block device is running. A more complex version of what we are implementing is a credit card reader. This device reads in information and then encrypts the data before reading it out to a centralized server.
+        
+    \section{ Design }
     
-    	For the design of this code we decided to take a very minimalistic approach. This means only touching on the very necessities that are required for a RAM Disc device driver. This means that we are only going to use a few key functions to do what we need to do. These functions provide the following functionalities: Read/Write, Encryption, Queuing, Input and Output Control, Initialization, and Exit.
+        For the design of this code we decided to take a very minimalistic approach. This means only touching on the very necessities that are required for a RAM Disc device driver. This means that we are only going to use a few key functions to do what we need to do. These functions provide the following functionalities: Read/Write, Encryption, Queuing, Disk Geometry, Initialization, and Exit.
 
     The only parameter of the kernel module is the key used for encryption. 
     Since this key is public information, we will Asymmetric Key Generation (The RSA Algorithm) defined in \url{https://github.com/sanderau/OS2_group31/blob/master/linux-yocto-3.19.2/crypto/asymmetric_keys/ }
         
-	\subsection{Read/Write}
+    \subsection{Read/Write}
     With the read and write operations on our Linux machine, we decided to handle the reading and writing with a simple memory allocation into ram and then handling each individual request to write by encrypting the data sent to ram with memcopy. This allowed us a simple and easy way to handle individual requests while also making sure all memory was encrypted at the time. We handled read requests by just checking the read/write bit and seeing which way memory was being copied. This time decryption will be handled after reading out since we will only be handling the buffer. This provided us with a simple execution of a read/write function and our encryption functionality built in.
 
     \subsection{Encryption}
@@ -66,35 +64,64 @@
 
         The RSA algorithm can provide a public key, and a private key between a host and client, protecting the integrity of a device.
         Even if an external source finds a public key, the private key can encrypt messages from the host machine, and send to other devices that have a shared RSA key.
+        
+        \subsection{Encryption Implementation}
+        
+        For the actual implementation of the encryption we used an API provided for us inside of the linux kernel. We used the library fcrypto.h. We also allowed for the user to enter the key if they chose to using command line arguments. However it was not critical and a key was inside the module if the user decided not to enter a key. If they did decide to enter a key the user also needs to include the length of the key. Once those things are out of the way the module just uses several function calls to set the key for the encryption and then just encryption decryption calls to encrypt and decrpyt the data written.
     
     \subsection{Request Queue}
-    We handled request queuing by implementing a simple request queue. This was done with the function \begin{verbatim} struct request *elv_next_request(struct request_queue *queue) \end{verbatim}. This function triggers a series of checks to see if the request in the queue identifies as a valid request for the driver. If it does validate then it will send it to the read/write function which handles data encryption and Input/Output.
-
-    In the crypto directory, we can specify what kind of encryption we want for this module. Since we trust the process sent from the client to the VM, the kernel will run it. 
-	\subsection{I/O CNTL}
-	We have implemented a standard device driver I/O control function, since this is required for registering devices. This function describes and handles device information for the user.
+    We handled request queuing by implementing a simple request queue. This was done with the function \begin{verbatim} struct request *elv_next_request(struct request_queue *queue) \end{verbatim}. This function triggers a series of checks to see if the request in the queue actually identifies as a valid request for the driver. If it does validate then it will send it to the read/write function which handles data encryption and Input/Output.
     
-	\subsection{INIT}
-    Our Init function is probably the most complex. This is due to the different things that we need to initialize when setting up the driver. Our driver initializes the ram using Kmalloc. It then intializes a block queue using \begin{verbatim} struct request_queue * blk_init_queue (	request_fn_proc * rfn, spinlock_t * lock); \end{verbatim} This request queue is established and will run requests through our driver. We then establish our struct and initialize the data for our disk and then return 0. If there was an error it jumps to the bottom to execute kfrees to allow for easy and non-messy cleanup.
+    \subsection{ Disk Geometry}
+    We have implemented a standard device driver I/O control function, since this is required for registering devices. This function describes and handles device information for the user and defines the devices geometry(this is what is used to describe how many sections and blocks the disk is using)
+    
+    \subsection{INIT}
+    Our Init function is probably the most complex. This is due to the different things that we need to initialize when setting up the driver. Our driver initializes the ram using Kmalloc. It then intializes a block queue using \begin{verbatim} struct request_queue * blk_init_queue (    request_fn_proc * rfn, spinlock_t * lock); \end{verbatim} This request queue is established and will run requests through our driver. We register the block device with the kernel allowing it to be accessed with a major number. Major numbers are used to call device drivers within the active device queue. We then establish our struct and initialize the data for our disk and then return 0. If there was an error it jumps to the bottom to execute kfrees to allow for easy and non-messy cleanup.
     
     \subsection{EXIT}
     
-    This exit function is simple and consists of only five calls. The first call is \begin{verbatim}  void del_gendisk(struct gendisk *disk) \end{verbatim} which is a call to remove the disk from the active disk queue. This call cleans up all data associated with said disk and stops all future requests. The second call is to \begin{verbatim}  void put_disk(struct gendisk *disk) \end{verbatim} This call actually makes it so the disk is no longer accessible. The next call is to \begin{verbatim}  unregister_blkdev(Int, char*) \end{verbatim} This call will unregister the major number assigned to the block device. This unregisters the major:minor pairing. The fourth call cleans up the queue which will remove all nodes from the queue. The final call frees the memory allocated for the disk driver.
+    This exit function is simple and consists of only five calls. The first call is \begin{verbatim}  void del_gendisk(struct gendisk *disk) \end{verbatim} which is a call to remove the disk from the active disk queue. This call cleans up all data associated with said disk and stops all future requests. The second call is to \begin{verbatim}  void put_disk(struct gendisk *disk) \end{verbatim} This call actually makes it so the disk is no longer accessible. This can be useless in the newer implementations of Linux but it sometimes can clean up things that are missed. The next call is to \begin{verbatim}  unregister_blkdev(Int, char*) \end{verbatim} This call will unregister the major number assigned to the block device. This unregisters the major:minor pairing. The fourth call cleans up the queue which will remove all nodes from the queue. The final call frees the memory allocated for the disk driver.
 
-	
-	\section{Testing}
-        To test that this LKM is working properly, we will move the module into the running VM, and insert the module into the request queue (the function name is specified in the Request Queue Subsection). This is to show that a RAM driver module can be received from an outside source, and put into an I/O elevator that the kernel will run.
-	\section{Command Log}
+    
+    \section{Testing correctness}
+    
+    Once the module is inserted into the kernel to test the functionality you just need to use the operating system normally. Once you have run a few programs and done a few things you can go check the syslog in the operating system. Since the module is peppered with printk statements you can just find your modules printk statements inside the log to see what is performing its job and what is failing. Once that informtation is retrieved it is just your typical debugging from there.
 
-    \bibliographystyle{IEEEtran}
-    \bibliography{refs}
+    \section{Command Log}
+        The first thing we did to enable an SCP connection between the host machine and the virtual was change the commands entered when booting the qemu VM. I for the most part used the same command that in the first homework, but I changed one element. Instead of the "-net none" command I changed it to "-redir tcp:2222::22". This would allow me to SCP into qemu on the host machine at the host machine port 2222. The files would then get transfered into qemu on port 22. The command would look like this in total: 
+    \begin{itemize}
+    \item qemu-system-i386 -gdb tcp::5531 -S -nographic -kernel bzImage-qemux86.bin -drive file=core-image-lsb-sdk-qemux86.ext4,if=virtio -enable-kvm \textbf{-redir tcp:2222::22} -usb -localtime --no-reboot --append "root=/dev/vda rw console=ttyS0 debug"
+    \end{itemize}
+    
+    You can now successfully transfer files into the VM using SCP. The command to transfer files into the VM will generally look like this:
+    
+    \begin{itemize}
+        \item scp -P 2222 $\langle File To Transfer \rangle$ root@localhost:/home/root/$\langle desired Directory \rangle$
+    \end{itemize}
+    
+    Of course if we bound the host machine port to a different port we would use a different port number here, but for the sake of this paper I just used the exact command that I used. With these two commands I could now transfer all the needed files to insert our new module into Yocto's kernel. To actually make the *.ko file that we will insert into the kernel we just use the makefile that we have included to construct the module and then put the *.ko file into the VM using scp. Once that file is inside the VM we just use the command 
+    
+    \begin{itemize}
+        \item insmod *.ko
+    \end{itemize}
+    
+    
+    The star in the command just represents what we named the module. Once the module is inside the kernel with the insert module command you should be able to use our written module like it is block device driver. To take the module out of the kernel you just use the rmmod and the module name to remove it from the kernel.\\
+   \\ After we've inserted our device driver into the kernel we run the command \begin{verbatim} mkfs -t ext2 ~/ \end{verbatim} This will create an ext2 file system on our new device. This should be encrypted file system that has the read/write and decrypt/encrypt files respectively.
+    \section{VCS LOG}
+    
+    \section{WORK LOG}
+    Zach and Austin started the implementation during the week of 5/14. We fished up our block device during the weekend of 5/26.
+    
+    We wrote the paper on 5/26 and 5/27 where Austin and Zach talked about their implementation and . Kevin wrote about encryption.
+    
         \end{document}
-	}
-	}
-	}
-	}
-	}
-	}
-	}
-	}
-	}
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
