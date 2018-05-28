@@ -1,0 +1,401 @@
+commit 2b7e0b513d8fc7f8f32d5c77ea9d5aa40aaee8a1
+Author: Kevin Talik <Kevin Talik>
+Date:   Sun May 27 17:05:05 2018 -0700
+
+    Added a section about the importance of using Asymmetric keys over symmetric keys
+
+commit d56be63445993299dc306551000d16124cf2de5b
+Author: Kevin Talik <Kevin Talik>
+Date:   Sun May 27 15:04:51 2018 -0700
+
+    Adding sections on RSA key generation, and the benefits of Asymmetric vs Symmetric Key generation
+
+commit 1c18452df7a4b531c684548446d6e5741ba9959d
+Author: Kevin Talik <Kevin Talik>
+Date:   Sun May 27 14:12:51 2018 -0700
+
+    Rephrased the purpose of the crypto assignment
+
+commit 87ace2179b812fb442812e084cc9368a620a22ac
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sun May 27 03:05:08 2018 -0700
+
+    small change
+
+commit cded7168a6cb8826159468e7dd280d8c331d1b46
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sun May 27 03:04:24 2018 -0700
+
+    Adding more code changes and mostly done paper.
+
+commit e1285d6e7d85a13d20d8ff5edd6dda00f52cc418
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sat May 26 22:45:55 2018 -0700
+
+    MORE COMMENTS
+
+commit f18fc2ce053ed9685d39922131af197b6c37cfa8
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sat May 26 22:43:45 2018 -0700
+
+    ading r/w function
+
+commit 35058b22ff0094ae20eafcf72bfb73e97804fef5
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sat May 26 22:32:00 2018 -0700
+
+    I think I got them all now
+
+commit b64e5108895b30c983a7afad886083043f4f71a6
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sat May 26 22:29:26 2018 -0700
+
+    Fixing comments I think
+
+commit 2653312c6b27ea8b9afff82935afbe0764a0f085
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sat May 26 22:27:53 2018 -0700
+
+    small change
+
+commit bf68698f550ceb85223c2a73275d08c0ed85d09f
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sat May 26 22:23:38 2018 -0700
+
+    Adding this file so austin can see it. Still working on modifing it so it accomplishes what we need. Not ready to compile. Still applying the block device and checking yocto systems to make sure it fits between these requirements
+
+commit 5c3c66eff924086e083d5924c8ae5c271c439b40
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Sat May 26 21:16:18 2018 -0700
+
+    User can now add their own key via command line if they choose to
+
+commit 34f02b12892b456c94c2a156fc4ced7bdac55807
+Merge: 9797708 48715b4
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Sat May 26 20:33:54 2018 -0700
+
+    Merge branch 'master' of https://github.com/sanderau/OS2_group31
+
+commit 9797708caba0902eb1012299ee3d12a0a6af1d7b
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Sat May 26 20:33:17 2018 -0700
+
+    Alright so the module skeleton now compiles. I can not get it to compile while including the linuxBRD file, but we will figure that out when we need functionality from it
+
+commit 48715b40e9f82d833a0bf269c9188f394230c2db
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Sat May 26 20:07:40 2018 -0700
+
+    Delete makefile
+
+commit b1c25681e34f52be1e85e679373e540d683043a6
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Sat May 26 20:07:04 2018 -0700
+
+    So I guess it matters how you name things when writing modules. Changing the makefile to have capital M because who ever made the compiler made it very clear that capital M makefile is the only way to go
+
+commit d9167e96ab0c3eb6592c058e0de945995a5896e0
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Sat May 26 10:10:01 2018 -0700
+
+    Adding outline to paper. This only includes a few changes to C file since the product I have still isn't compiling.
+
+commit a23c2a26963257df8a104ac79e22e3529f991a92
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Fri May 25 12:11:49 2018 -0700
+
+    Adding the linux implementation for testing with the yocto kernel. This is part of the original kernel that I have no rights to.
+
+commit 2296e45a4c878b6596424f3e4e68f5e795707818
+Author: tusingz <zttusing@protonmail.ch>
+Date:   Wed May 23 21:46:20 2018 -0700
+
+    The
+
+commit e8509bdd80562a925f04cda4acc319718dd78153
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Wed May 23 21:04:09 2018 -0700
+
+    adding the makefile
+
+commit 215a2fe38a9f58dd92a9e0bf32e92b4b00a745ef
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Wed May 23 20:58:58 2018 -0700
+
+    Changing source to c
+
+commit 155f082e7245b314a4de651ae0f524fd00a6a896
+Author: Zachary Tusing <zttusing@protonmail.ch>
+Date:   Wed May 23 20:52:02 2018 -0700
+
+    Create encrypt_block_device
+
+commit a46d85a6f5907185bc4604b321ec6f0a43374e12
+Author: Kevin Talik <talikk7@github.com>
+Date:   Wed May 23 18:10:36 2018 -0700
+
+    Added a source for SBD (Simple Block Driver), by corbet
+
+commit 123db2c2e54a9a861c60c3b7cbbdb435d35156e3
+Author: Kevin Talik <talikk7@github.com>
+Date:   Wed May 23 17:43:06 2018 -0700
+
+    Framed the introduction, and the outline
+
+commit 919d65066118e23eaebcd9773979a4daaaa25df2
+Author: Kevin Talik <Kevin Talik>
+Date:   Thu May 17 08:52:19 2018 -0700
+
+    Made some edits on the intro
+
+commit 99420307f41ed82d2eb0a3fe7d435680aa34f781
+Author: Kevin Talik <talikk7@github.com>
+Date:   Tue May 15 09:15:08 2018 -0700
+
+    Added an introduction... Probably wont use SSH in the end..
+
+commit 46880d0ab665af1b01c35fe1d679e3b0f1fedc9a
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Tue May 15 08:43:53 2018 -0700
+
+    Adding the blank write up files
+
+commit a5a353df06dc419c0b5f78bd66d08cc2a584c6f9
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Tue May 8 22:03:02 2018 -0700
+
+    Add files via upload
+
+commit 093151c0e50bc35d8a7438069425faf12e794557
+Author: Zachary Tusing <zttusing@protonmail.ch>
+Date:   Tue May 8 19:21:36 2018 -0700
+
+    we done except for how to grade
+
+commit 2196b4e0312896a1882c8c7224ac98e5ab0264d9
+Author: Zachary Tusing <zttusing@protonmail.ch>
+Date:   Tue May 8 19:19:15 2018 -0700
+
+    Update project2CS444.tex
+
+commit 26ed53a5b8929bb5a88ca68271c6a7aac5d075b8
+Author: Zachary Tusing <zttusing@protonmail.ch>
+Date:   Tue May 8 19:02:20 2018 -0700
+
+    Update project2CS444.tex
+
+commit 3d2940d880dede88051ce51b4b2c1e737ccb836f
+Author: Austin Sanders <sanderau@oregonstate.edu>
+Date:   Tue May 8 17:40:50 2018 -0700
+
+    Add files via upload
+
+commit 5d1cf152f24116e8cfe2f1d1d5de12d0b98ce785
+Author: Zachary Tusing <zttusing@protonmail.ch>
+Date:   Tue May 8 17:22:12 2018 -0700
+
+    updating tex
+
+commit 231ffc4b95e28e17744ebbd745d380e6507ce385
+Author: sanderau <sanderau@oregonstate.edu>
+Date:   Tue May 8 14:46:20 2018 -0700
+
+    added the sections: plan of attack, ensuring the results, and what we learned. Still more to add and edit
+
+commit 633abc0d6b4ec07d6a8980b770c47f4b95d8c1a1
+Merge: a2bff8e b4adb80
+Author: Kevin Talik <Kevin Talik>
+Date:   Tue May 8 12:50:00 2018 -0700
+
+    Merge branch 'master' of https://github.com/sanderau/OS2_group31
+
+commit a2bff8e362dee19a485bf69b2a508caa0b05620e
+Author: Kevin Talik <Kevin Talik>
+Date:   Tue May 8 12:49:56 2018 -0700
+
+    Added my files for the individual writing assignments
+
+commit b4adb80ce6bca025ac482f8bf109dea7e21af72a
+Author: Zachary Tusing <zttusing@protonmail.ch>
+Date:   Mon May 7 22:12:41 2018 -0700
+
+    Update project2CS444.tex
+
+commit 93bb0fc27951e5c9ee77cc8bb8e9f88d11ccdb4d
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Mon May 7 21:46:44 2018 -0700
+
+    Adding the last two functionalities (former_req, latter_req). Module now compiles with no errors and warnings. Should work. Just going to adjust some formatting
+
+commit 99ec277e707c63d2e7d341df295f15359c02968f
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Mon May 7 21:27:35 2018 -0700
+
+    sstf_dispatch meow works
+
+commit 50da0fe21d4cdbe5c32574a45a81ef30dc0ad799
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Mon May 7 21:14:14 2018 -0700
+
+    merge now works
+
+commit f1d35b64b10646235f8a67e75b323ae6b9c42f93
+Merge: 25ae9c2 4c2eca0
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Mon May 7 21:05:17 2018 -0700
+
+    Merge branch 'master' of https://github.com/sanderau/OS2_group31
+
+commit 25ae9c260c94a64ee24c3195df069fee7bbb6699
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Mon May 7 21:04:57 2018 -0700
+
+    Can now successfully add a request to the elevator
+
+commit 4c2eca013b6de8dd6c07fb45815831b947a56817
+Merge: 9eb4f72 209a7d7
+Author: Kevin Talik <Kevin Talik>
+Date:   Mon May 7 18:51:54 2018 -0700
+
+    Merge branch 'master' of https://github.com/sanderau/OS2_group31
+
+commit 9eb4f72db049415e4f13387ede958f71f008349f
+Author: Kevin Talik <Kevin Talik>
+Date:   Mon May 7 18:51:51 2018 -0700
+
+    Made some teeny tiny edits
+
+commit 209a7d7963294a5690a85bdbafe703ad5ffa9f7e
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Mon May 7 18:46:12 2018 -0700
+
+    finished the exit function for the elevator
+
+commit 247cb4492f43a6c73bcda17fa980be24ba44906f
+Merge: 6684065 b3676dd
+Author: Kevin Talik <Kevin Talik>
+Date:   Mon May 7 18:38:30 2018 -0700
+
+    Merge branch 'master' of https://github.com/sanderau/OS2_group31
+
+commit 66840658047164fa2a09787cabc5a942c961a698
+Author: Kevin Talik <Kevin Talik>
+Date:   Mon May 7 18:38:26 2018 -0700
+
+    Completed a full page of framing for the document
+
+commit b3676dd9d4fded7f7df474a8348340eec43a061f
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Mon May 7 18:35:33 2018 -0700
+
+    init function is implemented and compiles
+
+commit fbd64d7f416d57b81fcea997b9caba4a04aaab62
+Merge: 8804004 71ca84f
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Mon May 7 17:56:41 2018 -0700
+
+    Merge branch 'master' of https://github.com/sanderau/OS2_group31
+
+commit 88040043bd7be30b250171728ff139700529a9aa
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Mon May 7 17:56:17 2018 -0700
+
+    The Kconfig.iosched and Makefile should include the needed changes. All that is left is writing the functionality for the new elevatr
+
+commit 71ca84ff187d26f744ade57f470fd4aa475dd23c
+Author: Kevin Talik <Kevin Talik>
+Date:   Mon May 7 17:31:08 2018 -0700
+
+    Filled out background on linux scheduling
+
+commit 9a800595c58893ed786c9734676aeed0f9fb59bd
+Merge: 2be0030 1170f3d
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Mon May 7 16:20:26 2018 -0700
+
+    Merge branch 'master' of https://github.com/sanderau/OS2_group31
+
+commit 2be0030575e2b6d4d0a0e04ada3950dc54b3b583
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Mon May 7 16:19:47 2018 -0700
+
+    I added the initiate and exit functions for the module. Now all that is left is implementing all of the functionality for the elevator structure
+
+commit 1170f3df20f33df96f36d3ad313e9dc43dcd972a
+Author: Kevin Talik <talikk7@github.com>
+Date:   Mon May 7 15:32:20 2018 -0700
+
+    Commiting my code so I can figure out copy and pasting functionality into putty
+
+commit 8784eaad9e96c4bcf047881c4ace72dad41830bf
+Author: Kevin Talik <talikk7@github.com>
+Date:   Mon May 7 15:15:20 2018 -0700
+
+    Filling out the sections of the document
+    
+    this is an attempt to get my personal github to push code to the repo
+
+commit eeeb51e440b44dd6076f2e147c2aae3edb15a905
+Merge: b7aa988 1355fe7
+Author: Kevin Talik <talikk@flip1.engr.oregonstate.edu>
+Date:   Mon May 7 14:42:27 2018 -0700
+
+    Merge branch 'master' of https://github.com/sanderau/OS2_group31
+    
+    Attempting to merge with my flip account changes, lets see where this goes
+
+commit b7aa988b728fa330d84e58bdac226f0979c4172c
+Author: Kevin Talik <talikk@flip1.engr.oregonstate.edu>
+Date:   Mon May 7 14:41:51 2018 -0700
+
+    Updated the README manifesto
+
+commit 1355fe71f97c0e2542c2d38c07d55bce5abe742f
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Mon May 7 14:29:10 2018 -0700
+
+    Added the init and exit macro definitions
+
+commit 30aaf60b490e4a192aea59db5a2165cfe513bce0
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Mon May 7 11:51:14 2018 -0700
+
+    adding and cleaning up the beginning of the sstf sched
+
+commit 80f573d786841810a8ed1abb3f787a4cf2b31389
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Sun May 6 21:37:38 2018 -0700
+
+    The other two files we will need
+
+commit b948543d4ce4708fdc3184ded73691888cc99b3b
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Sun May 6 21:34:59 2018 -0700
+
+    Adding the scheduler, just the needed libraries right now
+
+commit ce6de2dfeb64434c7d3ed55d2ea97441b8e96d9c
+Author: Kevin Talik <Kevin Talik>
+Date:   Sat May 5 15:33:22 2018 -0700
+
+    Added the base *tex files
+
+commit 8d49c0f9c0e3667b766c07519123403d1f51f8cb
+Author: Austin Sanders <sanderau@os2.engr.oregonstate.edu>
+Date:   Thu Apr 12 22:59:11 2018 -0700
+
+    this should add the kernel to our github
+
+commit 4b1017a431a0bcc1caeab32918d8eb6f605666af
+Author: sanderau <sanderau@oregonstate.edu>
+Date:   Mon Apr 9 12:25:15 2018 -0700
+
+    Update README.md
+
+commit b8c1ef1def908a31ee887b59e2f453e7ab2b0804
+Author: sanderau <sanderau@oregonstate.edu>
+Date:   Mon Apr 9 12:24:01 2018 -0700
+
+    Create README.md
