@@ -1,3 +1,9 @@
+#include <linux/fs.h>
+#include <linux/errno.h>
+#include <linux/types.h>
+#include <linux/vmalloc.h>
+#include <linux/genhd.h>
+#include <linux/hdreg.h>
 #include <linux/blkdev.h> /* Items used: request_queue, */
 #include <linux/elevator.h>
 #include <linux/bio.h>
@@ -10,6 +16,7 @@
 
 #define MOD_AUTHORS "Austin Sanders, Zachary Tusing, Kevin Talik"
 #define MOD_DESC "A module to write encrypted data and read then decrypt data from RAM while treating it like a block device."
+#define KERNEL_SECTOR_SIZE 512
 
 /*
 References:
@@ -23,13 +30,31 @@ References:
 MODULE_LICENSE("Dual BSD/GPL");
 
 
+/* type definitions */
+
+typedef struct request_queue request_queue_t;
+
+/* end of definitions */
+
 static struct request_queue *Queue;
+static int nsectors=1024;
+
+static int hardsect_size = 512;
+module_param(hardsect_size, int, 0);
+static int major_num = 0;
+module_param(major_num, int, 0);
+static char *key = "someKey";
+static int key_length = 7;
+module_param(key, charp, 0000);
+module_param(key_length, int, 0);
+
 
 /*
  * The internal representation of our device.
  */
 static struct sbd_device {
     unsigned long size;
+    spinlock_t lock;
     u8 *data;
     struct gendisk *gd;
 } Device;
@@ -39,6 +64,13 @@ static void sbd_readWrite(struct sbd_device *dev, unsigned long sector,
 {
     unsigned long offset = sector*hardsect_size;
     unsigned long nbytes = nsect*hardsect_size;
+    int i;
+    char *m[2];
+    unsigned long len;
+    u8 *src;
+    u8 *dest;
+
+    crypto_cipher_setkey(crypt, key, key_length);
     
     if ((offset + nbytes) > dev->size) {
 	printk (KERN_NOTICE "TOO LARGE OF A WRITE/READ TO DRIVER (%ld %ld)\n", offset, nbytes);
@@ -48,36 +80,66 @@ static void sbd_readWrite(struct sbd_device *dev, unsigned long sector,
 		https://kernel.readthedocs.io/en/sphinx-samples/crypto-API.html*/
     if(write)
     {
+	m[0] = "UNENCRYPTED";
+     	m[1] = "ENCRYPTED";
+	dst = dev->data + offset;
+	src = buffer;
     	/* encrypt buffer and put into dev->data*/
 
     	/* Write from the buffer to the block*/
-    	memcpy(dev->data + offset, buffer, nbytes);
+    	/*memcpy(dev->data + offset, buffer, nbytes);*/
+	for(i = 0; i < nbytes; i+= crypto_cipher_blocksize(crypt));
+	{
+		crypto_cipher_encrypt_one(crypt, dst+i, src+i);
+	}
     }
     else
 	{
+		m[0] = "UNENCRYPTED";
+	     	m[1] = "ENCRYPTED";
+		dst = buffer;
+		src = dev->data + offset;
+		
 		/* encrypt buffer and put into dev->data*/
 
 		/*Read from the block into the buffer*/
-		memcpy(buffer, dev->data + offset, nbytes);
+		/*memcpy(buffer, dev->data + offset, nbytes);*/
+
+		for(i=0; i<nbytes; i += crypto_cipher_blocksize(crypt)) {
+			crypto_cipher_decrypt_one(crypt, dst + i, src + i);
+		}
 	}
+
+	len = nbytes;
+	printk("%s:", m[0]);
+	while(len--)
+		printk(KERN_NOTICE "%u", (unsigned) *src++);
+
+	len = nbytes;
+	printk("\n%s:", m[1]);
+	while(len--)
+		printk(KERN_NOTICE "%u", (unsigned) *dst++);
+	printk(KERN_INFO "\n");
+
 }
 
 static void sbd_request(request_queue_t *q)
 {
-    struct request *req;
+    	struct request *req;
     /*
     https://lwn.net/Articles/333620/
     */
-    while ((req = elv_next_request(q)) != NULL) {
-	if (! blk_fs_request(req)) {
-	    printk (KERN_NOTICE "Skip non-CMD request\n");
-	    end_request(req, 0);
-	    continue;
+	while ((req = elv_next_request(q)) != NULL) {
+		if( ! blk_fs_request(req)) {
+			printk(KERN_NOTICE "Skip non-cmd request\n");
+			end_request(req, 0);
+			continue;
+		}
+    		
+		sbd_readWrite(&Device, blk_rq_pos(req), blk_rq_cur_sectors(req), req->buffer, rq_data_dir(req));
+
+		end_request(req, 1);
 	}
-	sbd_transfer(&Device, req->sector, req->current_nr_sectors,
-			req->buffer, rq_data_dir(req));
-	end_request(req, 1);
-    }
 }
 
 
@@ -85,25 +147,18 @@ static void sbd_request(request_queue_t *q)
 /*
  * Ioctl.
  */
-int sbd_ioctl (struct inode *inode, struct file *filp,
-                 unsigned int cmd, unsigned long arg)
+/* https://github.com/torvalds/linux/blob/master/drivers/block/brd.c */
+int sbd_getgeo (struct block_device *block_device, struct hd_geometry * geo)
 {
 	long size;
-	struct hd_geometry geo;
 
-	switch(cmd) {
-	    case HDIO_GETGEO:
-		size = Device.size*(hardsect_size/KERNEL_SECTOR_SIZE);
-		geo.cylinders = (size & ~0x3f) >> 6;
-		geo.heads = 4;
-		geo.sectors = 16;
-		geo.start = 4;
-		if (copy_to_user((void *) arg, &geo, sizeof(geo)))
-			return -EFAULT;
-		return 0;
-    }
-
-    return -ENOTTY; /* unknown command */
+	size = Device.size * ( hardsect_size / KERNEL_SECTOR_SIZE);
+	geo->cylinders = (size & ~0x3f) >> 6;
+	geo->heads = 4;
+	geo->sectors = 16;
+	geo->start = 0;
+	
+	return 0;
 }
 
 
@@ -114,7 +169,7 @@ int sbd_ioctl (struct inode *inode, struct file *filp,
  */
 static struct block_device_operations sbd_ops = {
     .owner           = THIS_MODULE,
-    .ioctl	     = sbd_ioctl
+    .getgeo 	     = sbd_getgeo
 };
 
 static int __init sbd_init(void)
@@ -124,7 +179,7 @@ static int __init sbd_init(void)
  */
     Device.size = nsectors*hardsect_size;
 
-    Device.data = kmalloc(Device.size);
+    Device.data = vmalloc(Device.size);
     if (Device.data == NULL)
 	return -ENOMEM;
 /*
@@ -133,7 +188,7 @@ static int __init sbd_init(void)
     Queue = blk_init_queue(sbd_request, &Device.lock);
     if (Queue == NULL)
 	    goto out;
-    blk_queue_hardsect_size(Queue, hardsect_size);
+    blk_queue_logical_block_size(Queue, hardsect_size);
 /*
  * Get registered.
  */
