@@ -43,7 +43,7 @@
        \pagebreak
        \section{ Purpose of this assignment }
 
-        Security-wise, it is important to learn about the vulnerabilities of files transferred to a running operating system. If the kernel cannot verify the integrity of the host, the kernel can accept files that can be inserted into the work queue of a processor. Additionally, if the module is encrypted, the owner of the OS can not see what the block device is running. 
+        Security-wise, it is important to learn about the vulnerabilities of files transferred to a running operating system. If the kernel cannot verify the integrity of the host, the kernel can accept files that can be inserted into the work queue of a processor. Additionally, if the module is encrypted, the owner of the OS can not see what the block device is running.  
 
 		This assignment had two key purposes. The first was to understand exactly how ram disk drivers work and how to encrypt the data. The second was to learn how crypto tools can be used to protect information on the computer. Files that are encrypted are described as a "Trapdoor" algorithm. It is easy to write a cypher, but difficult for a computer to decode without a key. 
 
@@ -53,18 +53,24 @@
 
     The only parameter of the kernel module is the key used for encryption. 
     Since this key is public information, we will Asymmetric Key Generation (The RSA Algorithm) defined in \url{https://github.com/sanderau/OS2_group31/blob/master/linux-yocto-3.19.2/crypto/asymmetric_keys/ }
-    If the memory of a block device (that is made during runtime) is encrypted, and inserted into the work queue, it can be scheduled to be executed with kernel-owned processes.
         
 	\subsection{Read/Write}
     With the read and write operations on our Linux machine, we decided to handle the reading and writing with a simple memory allocation into ram and then handling each individual request to write by encrypting the data sent to ram with memcopy. This allowed us a simple and easy way to handle individual requests while also making sure all memory was encrypted at the time. We handled read requests by just checking the read/write bit and seeing which way memory was being copied. This time decryption will be handled after reading out since we will only be handling the buffer. This provided us with a simple execution of a read/write function and our encryption functionality built in.
+
     \subsection{Encryption}
-    \subsection{ One Time Pad Encryption }
-    \subsubsection{ The Asymmetric Key Generation }
+    \subsubsection{ One Time Pad Encryption }
+        One Time Pad Encryption \cite{khanAcademy} is a method of protecting messages by making a new, random key for every message.
+        One Time Pad encryption is one of the strongest types of encryption, as there are many permutations of what a cypher could contain. 
+        The strength of OTP is dependent on the integrity of the key to decrypt the cypher that is shared. 
+
+        The problem with OTP is that when you use symmetric keys over asymmetric keys, someone in the middle can decypher messages \cite{asymmetric}.
+
+        The RSA algorithm can provide a public key, and a private key between a host and client, protecting the integrity of a device.
     
     \subsection{Request Queue}
-    We handled request queuing by implementing the simplest request queue. This was done with the function \begin{verbatim} struct request *elv_next_request(struct request_queue *queue) \end{verbatim}. This function triggers a series of checks to see if the request in the queue actually identifies as a valid request for the driver. If it does validate then it will send it to the read/write function which handles data encryption and Input/Output.
+    We handled request queuing by implementing a simple request queue. This was done with the function \begin{verbatim} struct request *elv_next_request(struct request_queue *queue) \end{verbatim}. This function triggers a series of checks to see if the request in the queue actually identifies as a valid request for the driver. If it does validate then it will send it to the read/write function which handles data encryption and Input/Output.
 	\subsection{I/O CNTL}
-	We have implemented a standard device driver I/O control function. Since this is required for registering devices. This function describes and handles device information for the user.
+	We have implemented a standard device driver I/O control function, since this is required for registering devices. This function describes and handles device information for the user.
     
 	\subsection{INIT}
     Our Init function is probably the most complex. This is due to the different things that we need to initialize when setting up the driver. Our driver initializes the ram using Kmalloc. It then intializes a block queue using \begin{verbatim} struct request_queue * blk_init_queue (	request_fn_proc * rfn, spinlock_t * lock); \end{verbatim} This request queue is established and will run requests through our driver. We then establish our struct and initialize the data for our disk and then return 0. If there was an error it jumps to the bottom to execute kfrees to allow for easy and non-messy cleanup.
@@ -73,12 +79,9 @@
     
     This exit function is simple and consists of only five calls. The first call is \begin{verbatim}  void del_gendisk(struct gendisk *disk) \end{verbatim} which is a call to remove the disk from the active disk queue. This call cleans up all data associated with said disk and stops all future requests. The second call is to \begin{verbatim}  void put_disk(struct gendisk *disk) \end{verbatim} This call actually makes it so the disk is no longer accessible. The next call is to \begin{verbatim}  unregister_blkdev(Int, char*) \end{verbatim} This call will unregister the major number assigned to the block device. This unregisters the major:minor pairing. The fourth call cleans up the queue which will remove all nodes from the queue. The final call frees the memory allocated for the disk driver.
 
-	\section{Design Decisions}
-    
-    There are 
-
+	
 	\section{Testing correctness}
-
+        
 	\subsection{Testing outline}
 
 	\section{Command Log}
