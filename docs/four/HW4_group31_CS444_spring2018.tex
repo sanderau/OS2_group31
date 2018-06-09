@@ -1,3 +1,4 @@
+
 \documentclass[onecolumn, draftclsnofoot,10pt, compsoc]{IEEEtran}
 \usepackage{graphicx}
 \usepackage{url}
@@ -7,29 +8,29 @@
 \geometry{textheight=9.5in, textwidth=7in}
 
 % 1. Fill in these details
-\def \CapstoneTeamName{		Operating Systems II}
-\def \CapstoneTeamNumber{		Group 31}
-\def \GroupMemberOne{			Kevin Talik}
-\def \GroupMemberTwo{			Austin Sanders}
-\def \GroupMemberThree{			Zach Tusing}
-\def \CapstoneProjectName{		Homework 4}
+\def \CapstoneTeamName{     Operating Systems II}
+\def \CapstoneTeamNumber{       Group 31}
+\def \GroupMemberOne{           Kevin Talik}
+\def \GroupMemberTwo{           Austin Sanders}
+\def \GroupMemberThree{         Zach Tusing}
+\def \CapstoneProjectName{      Homework 4}
 
-			
+            
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
- 	\begin{center}
-	\huge\bf{ Homework 4:} 
+    \begin{center}
+    \huge\bf{ Homework 4:} 
    
     \large\textbf{\textit{ The SLOB Slab }}\par
      
     
     
-	\small{\bf CS 444 : \textit Operating Systems II, Oregon State University}\par
+    \small{\bf CS 444 : \textit Operating Systems II, Oregon State University}\par
     \small{\bf{Group 31}}
     
     
-    {\bf\textit{ Spring Term, PUT THE DATE, 2018} }
+    {\bf\textit{ Spring Term, June 8th, 2018} }
     
     
     {\small {\bf Prepared by:} \GroupMemberOne, \GroupMemberTwo, and \GroupMemberThree }
@@ -38,12 +39,77 @@
     %\begin{flushright}
     %\small{Figure 69. This is a caption}
     %\end{flushright}
- 		\vfill
+        \vfill
 
        \pagebreak
        \section{Introduction}
-        The purpose of this assignment is to understand the functionality of the SLOB first-fit algorithm and SLOB best-fit algorithm. We will write a program to test the efficiency of both types of memory allocation, and the effects each algorithm has on fragmentation.
+        The purpose of this assignment is to understand the functionality of the SLOB memory heap allocator, and the first-fit and best-fit memory fitting strategy. We will write a program to test the fragmentation of both types of memory fitting allocation.
+        \subsection{Fit First and Best Fit}
+        Think of the memory allocator as a parking valet, and a memory block as a vehicle that needs to be parked.
+        Some processes need a lot of parking space (like a Handicap Van), and some processes need very little (like a Motorcycle). 
+        The Memory Allocating Valet needs to park the most amount of cars using the least amount of space.
+        Two primary fitting solutions for memory allocation used are "Fit-First" and "Best-Fit."
+        This is analogous to how the kernel puts the memory of a process into a page file of an operating system.
 
+        
+        
+        
+        \textit{Fit First} scans through the available spaces on the page files, checking each one to see if the memory blocks can fit in the space. It places a process into the first place it can fit, regardless of how much space it will need. This algorithm suffers from fragmentation, as it does not check all of the sizes of the blocks before fitting. If it needs more memory, the algorithm needs to start a scan from the beginning of the page files to find the first available space. This fragments the page file, leaving small, unusable gaps between allocated memory. \cite{whatIsFitFirst}. This fitting method can load one page file at a time, and place the memory the first place it sees fit.
+        
+        \textit{Best Fit} puts the smallest block into the smallest fitting space that it will fit. This is to save larger spaces for larger processes and avoid the fragmentation problem brought by first fit. This takes more time to search through, but puts the memory in the "Best-fitting" place \cite{bestFitting}. This method needs to look through all page files, to see where to allocate the memory.
+        
+        Back to the valet parking analogy; think of a vehicle as a process, and the size of the vehicle is the amount of memory it will take up. Imagine a motorcycle needs to be parked. Using a "Fit-First Strategy", the Parking valet sees the first parking spot that is free, which happens to be a handicap parking spot with lots of space. By parking the motorcycle in a larger spot than it needs, a van that needs more space will not be able to park there, leaving extra space that is not used.
+        If the valet used a "Best-Fit Strategy", the valet would look for the smallest amount of space that can be used by the motorcycle (which would be a motorcycle parking spot). This saves the larger spots for larger vehicles, maximizing the space used.
+        
+        \subsection{SLOB}
+        SLOB is the First Fit memory allocator that is, by default, implemented in the Yocto Kernel \cite{yoctoSLOB}. It uses Three Singly linked lists of pages to allocate memory \cite{breakingSLOBdemo}. This algorithm is fast at searching, but by placing memory at the first available space, the allocator may leave small gaps in the page file that are unusable.
+        For this assignment, our group is going to modify the slob.c file under the /mm directory so that it uses a Best-Fit strategy. To test results, we are going to compare fragmentation resulted by the original Fit First Strategy implemented in slob.c. 
+  
+ \pagebreak
+ \subsection{What we changed in the mm/slob.c}
+ As previously mentioned, slob.c has the first fit algorithm implemented in the function: \begin{verbatim} static void *slob_alloc( ... ) \end{verbatim} 
+ We changed how the slob.c is finding a searching for a file, by searching through all available space in all of the pages, and then fitting the memory into the space that is known as "The Best Fit."
+        
+ \subsection{How we tested}
+ A page file is fragmented heavily when the page is full, but there is still unused space. This means that there were processes that were fit into a space that had extra bytes left over.
+ 
+ We compared the percentages of unused space in a page file after allocating memory with both Fit First and Best Fit. We found the percentage of memory used by implementing a system call in the slob.c file to see what was going on in the kernel. Then we ran a script that called the system call functions. These system calls are setup by modifying the system call table when you compile the kernel for the first time. Then after you modify the system call table you will recompile. Then you are able to run the script that will tell you how effective the algorithm is. You need to do this twice in order to test the first-fit and best-fit algorithms.
+ 
+ \section{Questions}
+    
+    \subsection{The Point of this Assignment}
+        The point of this assignment was to understand how the slob works and allocates memory for linux kernel objects. We implemented the best-fit algorithm while the first-fit algorithm comes pre-installed on yocto. Both algorithms have their pros and cons associated with them and this assignment help illuminate the difference between the two. It helped strengthen our understanding of how a kernel works and which methods it uses to save Kernel Objects to memory.
+        
+        \subsection{The Approach}
+    I approached the issue by first understanding what the slob was, and what it did for the kernel. After that I then learned the difference between the first fit algorithm and the best fit algorithm. Then I searched the web for previous implementations of the best fit slob used in previous versions of Linux. Once I found one that was used in a previous version of a kernel I took the one used in the Yocto kernel and compared the two. Once I knew the difference between the two implemenetaions of slob I implemented a solution that would turn the current version of slob into a best fit version. Once I successfully wrote the algorithm I then changed the appropriate flags inside the makefile menuconfig and recompiled the kernel. Once it was recompiled I rebooted the operating system in a virtual machine and tested the new algorithm by using kmalloc or any other function that would interact with kernel objects.
+    
+   \subsection{Ensuring the Solution}
+   
+   To ensure the solution we took a more practical approach. We put a printk statement inside of our implementation so we could simply check the kernel logs and search for the message. Everytime the SLOB is called it will print a logs for verification. To show the difference between the two SLOB implementations we just wrote a system call to measure two things: the amount of memory used, and the amount of memory available. We then divide the two and use the percentages as an indicator of fragmentation.
+   
+   \subsection{What we Learned}
+        We learned a lot from this assignment. The first thing we learned was what the SLOB was and what it did within the Kernel. We then learned the difference between the best first and first fit implementations of the slob. Along with learning the different implementations of the SLOB we also learned the benefits and hindrances of each implementation. The benefits of the first fit being that the algorithm is simple compared to its peers, and the hinderance being that the disk will become fragmented a lot more easily. The best fit having the exact opposite pros and cons. We also learned, we relearned, how to write a linux patch file and recompile the kernel to use our new simple list of blocks implementation. We also applied our knowledge of how the SLOB works to test and ensure that our implementation would work. This assignment really builds on the last one and provided us with a better understanding of how memory works and is handled within an operating system. This class taught different steps to how memory is handled within the kernel. I feel as though I have a better overall understanding of how each individual part of handling data works. I was surprised to find out how much I learned because of this class. I think there might be better approaches to presenting the information but I think that the course structure is incredibly strong.
+        
+        \section{Work Log}
+        
+        Austin Sanders\\ 
+        Wrote section two, three, and four. Helped with the implementation of the new SLOB in the linux kernel.\\
+        \\
+        Kevin Talik\\
+        Wrote the entire first section. Section one and all of its subsections\\
+        \\
+        Zachary Tusing\\
+        Working on implementing the slob best-fit and helped test the module.
+        \\
+        
+        \section{VCS}
+        
+        
+        
+ 
+              
+        \bibliography{refs}
+        \bibliographystyle{IEEEtran}
 
         \end{document}
 \grid
