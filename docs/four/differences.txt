@@ -1,0 +1,51 @@
+*** bestFit/slob.c	2018-06-08 17:45:58.983930291 -0700
+--- yocto/slob.c	2018-06-08 17:53:29.295299626 -0700
+***************
+*** 214,224 ****
+  /*
+   * Allocate a slob block within a given slob_page sp.
+   */
+- 
+- /*
+-  * THIS IS WHERE WE IMPLEMENT THE BEST FIT ALMOST NOTHING ELSE CHANGES
+-  */
+- 
+  static void *slob_page_alloc(struct page *sp, size_t size, int align)
+  {
+  	slob_t *prev, *cur, *aligned = NULL;
+--- 214,219 ----
+***************
+*** 340,371 ****
+  }
+  
+  /*
+- this is the structure of the best fit algorithm to be implemented above
+-  for(m = 0; m < number_of_files; m++)
+-       {
+-             for(n = 0; n < number_of_blocks; n++)
+-             {
+-                   if(block_arr[n] != 1)
+-                   {
+-                         temp = block[n] - file[m];
+-                         if(temp >= 0)
+-                         {
+-                               if(lowest > temp)
+-                               {
+-                                     file_arr[m] = n;
+-                                     lowest = temp;
+-                               }
+-                         }
+-                   }
+-                   fragments[m] = lowest;
+-                   block_arr[file_arr[m]] = 1;
+-                   lowest = 10000;
+-             }
+-       }
+- */
+- 
+- 
+- /*
+   * slob_free: entry point into the slob allocator.
+   */
+  static void slob_free(void *block, int size)
+--- 335,340 ----
