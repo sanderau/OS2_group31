@@ -59,6 +59,7 @@
 #include <linux/kernel.h>
 #include <linux/slab.h>
 
+#include <linux/syscalls.h>
 #include <linux/mm.h>
 #include <linux/swap.h> /* struct reclaim_state */
 #include <linux/cache.h>
@@ -100,6 +101,9 @@ typedef struct slob_block slob_t;
 static LIST_HEAD(free_slob_small);
 static LIST_HEAD(free_slob_medium);
 static LIST_HEAD(free_slob_large);
+
+unsigned long free_mem = 0;
+unsigned long mem_occupied = 0;
 
 /*
  * slob_page_free: true for pages on free_slob_pages list.
@@ -216,7 +220,7 @@ static void slob_free_pages(void *b, int order)
  */
 static void *slob_page_alloc(struct page *sp, size_t size, int align)
 {
-	slob_t *prev, *cur, *aligned = NULL;
+	slob_t *prev, *cur, *aligned = NULL, *best;
 	int delta = 0, units = SLOB_UNITS(size);
 
 	for (prev = NULL, cur = sp->freelist; ; prev = cur, cur = slob_next(cur)) {
@@ -267,7 +271,11 @@ static void *slob_page_alloc(struct page *sp, size_t size, int align)
  */
 static void *slob_alloc(size_t size, gfp_t gfp, int align, int node)
 {
+	/*Assuring us the new SLOB is being used*/
+	printk(KERN_INFO "Entering the best-fit SLOB...\n")p
+
 	struct page *sp;
+	struct page *best;
 	struct list_head *prev;
 	struct list_head *slob_list;
 	slob_t *b = NULL;
@@ -295,21 +303,34 @@ static void *slob_alloc(size_t size, gfp_t gfp, int align, int node)
 		if (sp->units < SLOB_UNITS(size))
 			continue;
 
+		if((best == NULL) || (best->units > sp->units))
+			best = sp;
+
 		/* Attempt to alloc */
-		prev = sp->lru.prev;
-		b = slob_page_alloc(sp, size, align);
-		if (!b)
-			continue;
+		if(best!=NULL)
+			b = slob_page_alloc(best, size, align);
 
 		/* Improve fragment distribution and reduce our average
 		 * search time by starting our next search here. (see
-		 * Knuth vol 1, sec 2.5, pg 449) */
+		 * Knuth vol 1, sec 2.5, pg 449) *//*
 		if (prev != slob_list->prev &&
 				slob_list->next != prev->next)
 			list_move_tail(slob_list, prev->next);
-		break;
+		break;*/
 	}
 	spin_unlock_irqrestore(&slob_lock, flags);
+
+	free_mem=0;
+
+	list_for_each_entry(sp, &free_slob_small, list) { 
+		free_mem+=sp->units;
+	}
+	list_for_each_entry(sp, &free_slob_medium, list) { 
+		free_mem+=sp->units;
+	}
+	list_for_each_entry(sp, &free_slob_large, list) { 
+		free_mem+=sp->units;
+	}
 
 	/* Not enough space: must allocate a new page */
 	if (!b) {
@@ -328,11 +349,40 @@ static void *slob_alloc(size_t size, gfp_t gfp, int align, int node)
 		b = slob_page_alloc(sp, size, align);
 		BUG_ON(!b);
 		spin_unlock_irqrestore(&slob_lock, flags);
+		mem_occupied++;
 	}
 	if (unlikely((gfp & __GFP_ZERO) && b))
 		memset(b, 0, size);
 	return b;
 }
+
+/*
+
+this is the structure of the best fit algorithm to be implemented above
+ for(m = 0; m < number_of_files; m++)
+      {
+            for(n = 0; n < number_of_blocks; n++)
+            {
+                  if(block_arr[n] != 1)
+                  {
+                        temp = block[n] - file[m];
+                        if(temp >= 0)
+                        {
+                              if(lowest > temp)
+                              {
+                                    file_arr[m] = n;
+                                    lowest = temp;
+                              }
+                        }
+                  }
+                  fragments[m] = lowest;
+                  block_arr[file_arr[m]] = 1;
+                  lowest = 10000;
+            }
+      }
+
+*/
+
 
 /*
  * slob_free: entry point into the slob allocator.
@@ -362,6 +412,7 @@ static void slob_free(void *block, int size)
 		__ClearPageSlab(sp);
 		page_mapcount_reset(sp);
 		slob_free_pages(b, 0);
+		mem_occupied--;
 		return;
 	}
 
@@ -417,6 +468,17 @@ static void slob_free(void *block, int size)
 	}
 out:
 	spin_unlock_irqrestore(&slob_lock, flags);
+}
+
+
+SYSCALL_DEFINE0(MEMORY_FREE)
+{
+	return free_mem;
+}
+
+SYSCALL_DEFINE0(MEMORY_USED)
+{
+	return mem_occupied*SLOB_UNITS(PAGE_SIZE);
 }
 
 /*
